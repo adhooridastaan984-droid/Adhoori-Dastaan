@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Story Platform — Stories worth slowing down for</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN SYSTEM
+   ============================================================ */
+:root {
+  --bg: #faf9f7;
+  --surface: #f4f2ee;
+  --surface-2: #e9e6df;
+  --surface-3: #ddd9cf;
+  --text: #1a1a18;
+  --text-muted: #6b6862;
+  --border: #e3e0d9;
+  --accent: #b45309;
+  --accent-soft: #fef3c7;
+  --reader-bg: #faf9f7;
+  --reader-text: #232320;
+  --shadow: 0 1px 3px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,.05), 0 20px 40px rgba(0,0,0,.08);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-full: 999px;
+  --transition: 220ms cubic-bezier(.4,0,.2,1);
+}
+
+[data-theme="dark"] {
+  --bg: #0e0e0d;
+  --surface: #181816;
+  --surface-2: #232320;
+  --surface-3: #2e2e2a;
+  --text: #f1efe9;
+  --text-muted: #a09c92;
+  --border: #2a2a27;
+  --accent: #f59e0b;
+  --accent-soft: #3a2a08;
+  --reader-bg: #0e0e0d;
+  --reader-text: #e6e4dd;
+  --shadow: 0 1px 3px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.4);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,.4), 0 20px 40px rgba(0,0,0,.5);
+}
+
+[data-theme="sepia"] {
+  --bg: #f4ecd8;
+  --surface: #ece2c9;
+  --surface-2: #e2d5b7;
+  --surface-3: #d6c7a4;
+  --text: #3a2f1e;
+  --text-muted: #6b5a3e;
+  --border: #d8c8a6;
+  --accent: #92400e;
+  --accent-soft: #f0e0c0;
+  --reader-bg: #f4ecd8;
+  --reader-text: #3a2f1e;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  transition: background var(--transition), color var(--transition);
+}
+
+h1, h2, h3, h4, .font-serif {
+  font-family: 'Fraunces', Georgia, serif;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  font-weight: 600;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+img { display: block; max-width: 100%; }
+input, textarea { font-family: inherit; }
+
+/* ============================================================
+   ANIMATIONS (subtle, premium)
+   ============================================================ */
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(16px) } to { opacity: 1; transform: translateY(0) } }
+@keyframes slideInRight { from { transform: translateX(100%) } to { transform: translateX(0) } }
+@keyframes slideInUp { from { transform: translateY(100%) } to { transform: translateY(0) } }
+@keyframes shimmer { 0% { background-position: -1000px 0 } 100% { background-position: 1000px 0 } }
+@keyframes spin { to { transform: rotate(360deg) } }
+
+.fade-in { animation: fadeIn 400ms ease-out both; }
+.slide-up { animation: slideUp 400ms ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 640px) { .container { padding: 0 16px; } }
+
+.app { min-height: 100vh; display: flex; flex-direction: column; }
+.main { flex: 1; padding-bottom: 80px; }
+@media (min-width: 768px) { .main { padding-bottom: 0; } }
+
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+.navbar {
+  position: sticky; top: 0; z-index: 40;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.navbar-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px; max-width: 1280px; margin: 0 auto; padding: 0 24px;
+}
+.logo { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+.logo span { color: var(--accent); font-weight: 400; }
+.nav-links { display: none; gap: 32px; align-items: center; }
+@media (min-width: 768px) { .nav-links { display: flex; } }
+.nav-links a {
+  font-size: 14px; color: var(--text-muted); font-weight: 500;
+  transition: color var(--transition);
+}
+.nav-links a:hover, .nav-links a.active { color: var(--text); }
+.nav-actions { display: flex; align-items: center; gap: 6px; }
+.icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: var(--radius-full);
+  transition: background var(--transition);
+  font-size: 18px;
+}
+.icon-btn:hover { background: var(--surface-2); }
+.btn-dashboard {
+  display: none; padding: 8px 18px; border-radius: var(--radius-full);
+  background: var(--accent); color: #fff; font-size: 13px; font-weight: 500;
+  transition: filter var(--transition);
+}
+.btn-dashboard:hover { filter: brightness(1.1); }
+@media (min-width: 768px) { .btn-dashboard { display: inline-flex; } }
+.menu-btn { display: inline-flex; }
+@media (min-width: 768px) { .menu-btn { display: none; } }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 24px; border-radius: var(--radius-full);
+  font-size: 14px; font-weight: 500;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-secondary { background: var(--surface-2); color: var(--text); }
+.btn-secondary:hover { background: var(--surface-3); }
+.btn-outline { border: 1px solid var(--border); color: var(--text); }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+.btn-sm { padding: 8px 16px; font-size: 13px; }
+.btn-lg { padding: 14px 28px; font-size: 15px; }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero { border-bottom: 1px solid var(--border); overflow: hidden; }
+.hero-grid {
+  display: grid; gap: 48px; padding: 72px 0;
+  max-width: 1280px; margin: 0 auto; padding-left: 24px; padding-right: 24px;
+}
+@media (min-width: 768px) {
+  .hero-grid { grid-template-columns: 1fr 1fr; padding: 112px 24px; align-items: center; }
+}
+.hero-eyebrow {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em;
+  color: var(--accent); font-weight: 600;
+}
+.hero h1 {
+  font-size: clamp(36px, 6vw, 64px);
+  margin-top: 16px; line-height: 1.05; letter-spacing: -0.03em;
+}
+.hero p.lead {
+  margin-top: 24px; max-width: 440px;
+  color: var(--text-muted); font-size: 17px; line-height: 1.6;
+}
+.hero-actions { margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap; }
+.hero-visual { position: relative; }
+.hero-visual img {
+  width: 100%; aspect-ratio: 4/5; object-fit: cover;
+  border-radius: 24px; box-shadow: var(--shadow-lg);
+}
+.hero-badge {
+  position: absolute; bottom: -20px; left: -20px;
+  max-width: 280px; padding: 16px 20px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow-lg);
+  display: none;
+}
+@media (min-width: 768px) { .hero-badge { display: block; } }
+.hero-badge .eyebrow {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em;
+  color: var(--accent); font-weight: 600;
+}
+.hero-badge .title { margin-top: 4px; font-family: 'Fraunces', serif; font-weight: 600; font-size: 15px; }
+.hero-badge .author { margin-top: 4px; font-size: 12px; color: var(--text-muted); }
+
+/* ============================================================
+   SECTIONS
+   ============================================================ */
+.section { padding: 80px 0; }
+.section-surface { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.section-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; gap: 16px; flex-wrap: wrap; }
+.section-head h2 { font-size: clamp(24px, 3vw, 32px); }
+.section-head p { margin-top: 8px; color: var(--text-muted); font-size: 14px; }
+.section-link { font-size: 14px; color: var(--accent); font-weight: 500; }
+
+/* ============================================================
+   STORY CARD
+   ============================================================ */
+.story-grid { display: grid; gap: 32px; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .story-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .story-grid { grid-template-columns: repeat(4, 1fr); } }
+.story-grid-3 { grid-template-columns: 1fr; }
+@media (min-width: 768px) { .story-grid-3 { grid-template-columns: repeat(3, 1fr); } }
+
+.story-card { position: relative; cursor: pointer; }
+.story-card .cover-wrap {
+  position: relative; aspect-ratio: 3/4; overflow: hidden;
+  border-radius: 20px; background: var(--surface-2);
+}
+.story-card .cover-wrap img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 700ms cubic-bezier(.2,.6,.2,1);
+}
+.story-card:hover .cover-wrap img { transform: scale(1.06); }
+.story-card .cover-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.75) 0%, rgba(0,0,0,.2) 40%, transparent 70%);
+}
+.story-card .cover-meta {
+  position: absolute; bottom: 16px; left: 16px; right: 16px;
+  color: #fff;
+}
+.story-card .cover-meta .rt {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em;
+  opacity: 0.85;
+}
+.story-card .cover-meta h3 {
+  font-size: 18px; margin-top: 6px; font-weight: 600; line-height: 1.25;
+  font-family: 'Fraunces', serif;
+}
+.story-card .bookmark-btn {
+  position: absolute; top: 12px; right: 12px;
+  width: 36px; height: 36px; border-radius: var(--radius-full);
+  background: rgba(0,0,0,.4); color: #fff;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  transition: background var(--transition);
+  opacity: 0; transition: opacity var(--transition), background var(--transition);
+}
+.story-card:hover .bookmark-btn, .story-card .bookmark-btn.saved { opacity: 1; }
+.story-card .bookmark-btn:hover { background: rgba(0,0,0,.65); }
+.story-card .bookmark-btn.saved { color: #fbbf24; }
+
+/* ============================================================
+   CATEGORY CARD
+   ============================================================ */
+.category-row { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: thin; }
+.category-card {
+  flex: 0 0 auto; min-width: 200px;
+  border-radius: 16px; overflow: hidden;
+  background: var(--bg); border: 1px solid var(--border);
+  transition: transform var(--transition), box-shadow var(--transition);
+  cursor: pointer;
+}
+.category-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.category-card img { width: 100%; height: 120px; object-fit: cover; }
+.category-card .body { padding: 16px; }
+.category-card h3 { font-size: 16px; font-family: 'Fraunces', serif; }
+.category-card p { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.category-card .count { font-size: 11px; color: var(--accent); margin-top: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* ============================================================
+   AUTHOR CARD
+   ============================================================ */
+.author-grid { display: grid; gap: 24px; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .author-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .author-grid { grid-template-columns: repeat(4, 1fr); } }
+.author-card {
+  text-align: center; padding: 28px 20px;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--bg);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.author-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+.author-card img {
+  width: 80px; height: 80px; border-radius: var(--radius-full);
+  object-fit: cover; margin: 0 auto;
+  border: 3px solid var(--surface-2);
+}
+.author-card h3 { font-size: 16px; margin-top: 16px; font-family: 'Fraunces', serif; }
+.author-card p { font-size: 13px; color: var(--text-muted); margin-top: 6px; line-height: 1.5; min-height: 38px; }
+.author-card .follow-btn {
+  margin-top: 16px; padding: 8px 20px;
+  border-radius: var(--radius-full); font-size: 13px; font-weight: 500;
+  border: 1px solid var(--border); color: var(--text);
+  transition: all var(--transition);
+}
+.author-card .follow-btn:hover { border-color: var(--accent); color: var(--accent); }
+.author-card .follow-btn.following { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer { margin-top: 96px; border-top: 1px solid var(--border); background: var(--surface); }
+.footer-grid {
+  max-width: 1280px; margin: 0 auto;
+  display: grid; gap: 40px; padding: 56px 24px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 768px) { .footer-grid { grid-template-columns: 1.4fr 1fr 1fr 1fr; } }
+.footer h4 { font-size: 18px; font-family: 'Fraunces', serif; }
+.footer .desc { margin-top: 12px; font-size: 14px; color: var(--text-muted); max-width: 300px; line-height: 1.6; }
+.footer h5 {
+  font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em;
+  color: var(--text-muted); font-weight: 600; font-family: 'Inter', sans-serif;
+}
+.footer ul { list-style: none; margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+.footer ul a { font-size: 14px; color: var(--text); transition: color var(--transition); }
+.footer ul a:hover { color: var(--accent); }
+.social { display: flex; gap: 12px; margin-top: 16px; }
+.social a {
+  width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-full); background: var(--bg); border: 1px solid var(--border);
+  transition: all var(--transition);
+}
+.social a:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.footer-bottom {
+  border-top: 1px solid var(--border); padding: 24px;
+  text-align: center; font-size: 12px; color: var(--text-muted);
+}
+
+/* ============================================================
+   MOBILE BOTTOM NAV
+   ============================================================ */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg) 95%, transparent);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  display: grid; grid-template-columns: repeat(5, 1fr);
+}
+@media (min-width: 768px) { .bottom-nav { display: none; } }
+.bottom-nav a {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 10px 4px; font-size: 11px; font-weight: 500;
+  color: var(--text-muted); transition: color var(--transition);
+}
+.bottom-nav a .bi { font-size: 20px; line-height: 1; }
+.bottom-nav a.active { color: var(--accent); }
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 60;
+  background: rgba(0,0,0,.5);
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 16px; padding-top: 80px;
+  animation: fadeIn 200ms ease-out;
+}
+@media (min-width: 640px) { .modal-backdrop { align-items: center; padding-top: 16px; } }
+.modal {
+  width: 100%; max-width: 520px;
+  background: var(--bg); border-radius: var(--radius);
+  padding: 24px; box-shadow: var(--shadow-lg);
+  animation: slideUp 240ms ease-out;
+  max-height: 80vh; overflow-y: auto;
+}
+.search-input {
+  width: 100%; padding: 14px 18px;
+  border-radius: var(--radius-sm); border: 1px solid var(--border);
+  background: var(--surface); color: var(--text); font-size: 15px;
+  outline: none; transition: border-color var(--transition);
+}
+.search-input:focus { border-color: var(--accent); }
+.search-results { margin-top: 16px; }
+.search-item {
+  display: flex; gap: 12px; align-items: center;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: opacity var(--transition);
+}
+.search-item:last-child { border-bottom: none; }
+.search-item:hover { opacity: .7; }
+.search-item img { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; }
+.search-item .t { font-weight: 500; font-size: 14px; }
+.search-item .s { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.no-results { text-align: center; padding: 32px 0; color: var(--text-muted); font-size: 14px; }
+
+/* ============================================================
+   MOBILE MENU (drawer)
+   ============================================================ */
+.drawer-backdrop {
+  position: fixed; inset: 0; z-index: 55;
+  background: rgba(0,0,0,.4);
+  animation: fadeIn 200ms ease-out;
+}
+.drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 56;
+  width: 300px; max-width: 85vw;
+  background: var(--bg); border-left: 1px solid var(--border);
+  padding: 24px; display: flex; flex-direction: column;
+  animation: slideInRight 260ms cubic-bezier(.4,0,.2,1);
+}
+.drawer-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+.drawer nav { display: flex; flex-direction: column; gap: 4px; }
+.drawer nav a {
+  padding: 14px 16px; border-radius: var(--radius-sm);
+  font-size: 15px; font-weight: 500;
+  transition: background var(--transition);
+}
+.drawer nav a:hover, .drawer nav a.active { background: var(--surface-2); color: var(--accent); }
+
+/* ============================================================
+   SKELETONS
+   ============================================================ */
+.skeleton {
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface-3) 37%, var(--surface-2) 63%);
+  background-size: 1000px 100%;
+  animation: shimmer 1.6s infinite linear;
+  border-radius: var(--radius-sm);
+}
+.skel-card-cover { aspect-ratio: 3/4; border-radius: 20px; }
+.skel-line { height: 14px; margin-top: 12px; }
+.skel-line.short { width: 60%; }
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.empty {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; padding: 72px 24px;
+}
+.empty .icon { font-size: 48px; margin-bottom: 16px; opacity: .8; }
+.empty h3 { font-size: 22px; }
+.empty p { margin-top: 8px; color: var(--text-muted); font-size: 14px; max-width: 380px; line-height: 1.6; }
+.empty .action { margin-top: 24px; }
+
+/* ============================================================
+   STORY DETAIL / READER
+   ============================================================ */
+.story-header {
+  max-width: 760px; margin: 0 auto; padding: 64px 24px 0;
+}
+.story-header .back {
+  font-size: 13px; color: var(--text-muted); cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: color var(--transition);
+}
+.story-header .back:hover { color: var(--accent); }
+.story-header h1 {
+  font-size: clamp(32px, 5vw, 52px); margin-top: 24px;
+  line-height: 1.1; letter-spacing: -0.02em;
+}
+.story-header .excerpt {
+  margin-top: 16px; font-size: 18px; color: var(--text-muted); line-height: 1.6;
+}
+.story-meta {
+  display: flex; align-items: center; gap: 12px; margin-top: 28px; flex-wrap: wrap;
+}
+.story-meta img { width: 44px; height: 44px; border-radius: var(--radius-full); object-fit: cover; }
+.story-meta .name { font-size: 14px; font-weight: 600; }
+.story-meta .sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.story-meta .actions { margin-left: auto; display: flex; gap: 8px; }
+
+.reader-wrap { margin-top: 48px; }
+.reader-progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 30;
+  background: transparent;
+}
+.reader-progress-bar { height: 100%; background: var(--accent); width: 0; transition: width 120ms linear; }
+
+.reader-content {
+  max-width: 720px; margin: 0 auto; padding: 48px 24px 96px;
+  font-family: 'Fraunces', serif; font-size: 19px; line-height: 1.85;
+  color: var(--reader-text);
+}
+.reader-content h2 {
+  font-size: 26px; margin-top: 48px; margin-bottom: 8px;
+  color: var(--accent); font-weight: 600;
+}
+.reader-content h2:first-child { margin-top: 0; }
+.reader-content p { margin-top: 16px; }
+.reader-content em { color: var(--text-muted); }
+
+.chapter-nav {
+  max-width: 720px; margin: 0 auto; padding: 0 24px 48px;
+  display: flex; justify-content: space-between; gap: 12px;
+}
+.chapter-nav button {
+  padding: 12px 20px; border-radius: var(--radius-full);
+  border: 1px solid var(--border); font-size: 14px;
+  transition: all var(--transition);
+}
+.chapter-nav button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.chapter-nav button:disabled { opacity: .4; cursor: not-allowed; }
+.chapter-nav .progress { align-self: center; font-size: 13px; color: var(--text-muted); }
+
+.reading-controls {
+  position: fixed; right: 20px; bottom: 100px; z-index: 30;
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 6px; border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border); box-shadow: var(--shadow);
+}
+@media (min-width: 768px) { .reading-controls { bottom: 40px; } }
+.reading-controls button {
+  width: 38px; height: 38px; border-radius: var(--radius-full);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; transition: all var(--transition);
+}
+.reading-controls button:hover { background: var(--surface-2); }
+.reading-controls button.active { background: var(--accent); color: #fff; }
+
+/* ============================================================
+   COMMENTS
+   ============================================================ */
+.comments { max-width: 720px; margin: 0 auto; padding: 0 24px 80px; }
+.comments h2 { font-size: 22px; margin-bottom: 24px; }
+.comment-form { display: flex; gap: 12px; }
+.comment-form input {
+  flex: 1; padding: 12px 18px; border-radius: var(--radius-full);
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text); font-size: 14px; outline: none;
+  transition: border-color var(--transition);
+}
+.comment-form input:focus { border-color: var(--accent); }
+.comment-list { margin-top: 24px; display: flex; flex-direction: column; gap: 16px; }
+.comment {
+  display: flex; gap: 12px; padding: 16px;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface);
+}
+.comment img { width: 40px; height: 40px; border-radius: var(--radius-full); object-fit: cover; flex: 0 0 auto; }
+.comment .head { display: flex; align-items: center; gap: 8px; }
+.comment .name { font-size: 14px; font-weight: 600; }
+.comment .date { font-size: 12px; color: var(--text-muted); }
+.comment .text { margin-top: 6px; font-size: 14px; line-height: 1.6; color: var(--text); }
+.comment .actions { margin-top: 8px; display: flex; gap: 16px; font-size: 12px; color: var(--text-muted); }
+.comment .actions button { font-size: 12px; color: inherit; }
+.comment .actions button:hover { color: var(--accent); }
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+.dash-stats { display: grid; gap: 20px; grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 768px) { .dash-stats { grid-template-columns: repeat(4, 1fr); } }
+.stat-card {
+  padding: 24px; border: 1px solid var(--border);
+  border-radius: var(--radius); background: var(--surface);
+}
+.stat-card .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); font-weight: 600; }
+.stat-card .value { font-size: 32px; font-weight: 700; margin-top: 8px; font-family: 'Fraunces', serif; }
+.dash-grid { margin-top: 48px; display: grid; gap: 24px; grid-template-columns: 1fr; }
+@media (min-width: 1024px) { .dash-grid { grid-template-columns: 2fr 1fr; } }
+.panel {
+  padding: 24px; border: 1px solid var(--border);
+  border-radius: var(--radius); background: var(--surface);
+}
+.panel h3 { font-size: 18px; margin-bottom: 16px; }
+.panel ul { list-style: none; }
+.panel li {
+  display: flex; gap: 14px; align-items: center;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+}
+.panel li:last-child { border-bottom: none; }
+.panel li img { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; }
+.panel li .title { font-size: 14px; font-weight: 500; }
+.panel li .sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.panel li .edit { margin-left: auto; font-size: 13px; color: var(--accent); font-weight: 500; }
+.quick-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+
+/* ============================================================
+   PROFILE
+   ============================================================ */
+.profile-header {
+  display: flex; gap: 24px; align-items: center; flex-wrap: wrap;
+  padding: 32px; border: 1px solid var(--border);
+  border-radius: var(--radius); background: var(--surface);
+}
+.profile-header img {
+  width: 100px; height: 100px; border-radius: var(--radius-full); object-fit: cover;
+  border: 4px solid var(--bg);
+}
+.profile-header h1 { font-size: 28px; }
+.profile-header .bio { margin-top: 6px; color: var(--text-muted); font-size: 14px; }
+.profile-header .stats { display: flex; gap: 24px; margin-top: 16px; }
+.profile-header .stat .n { font-size: 20px; font-weight: 700; font-family: 'Fraunces', serif; }
+.profile-header .stat .l { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* ============================================================
+   FILTER BAR / PAGINATION
+   ============================================================ */
+.filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; }
+.chip {
+  padding: 8px 16px; border-radius: var(--radius-full);
+  border: 1px solid var(--border); font-size: 13px; font-weight: 500;
+  color: var(--text-muted); transition: all var(--transition);
+  cursor: pointer;
+}
+.chip:hover { border-color: var(--accent); color: var(--accent); }
+.chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.pagination { display: flex; gap: 6px; justify-content: center; margin-top: 48px; }
+.pagination button {
+  width: 38px; height: 38px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); font-size: 13px; font-weight: 500;
+  transition: all var(--transition);
+}
+.pagination button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.pagination button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.pagination button:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ============================================================
+   PAGE HEAD
+   ============================================================ */
+.page-head { padding: 56px 0 24px; }
+.page-head h1 { font-size: clamp(32px, 5vw, 48px); letter-spacing: -0.02em; }
+.page-head p { margin-top: 12px; color: var(--text-muted); font-size: 16px; max-width: 560px; line-height: 1.6; }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.toast-stack {
+  position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+  z-index: 80; display: flex; flex-direction: column; gap: 8px;
+  pointer-events: none;
+}
+@media (min-width: 768px) { .toast-stack { bottom: 24px; } }
+.toast {
+  padding: 12px 20px; border-radius: var(--radius-full);
+  background: var(--text); color: var(--bg);
+  font-size: 13px; font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 300ms ease-out;
+}
+
+/* ============================================================
+   NOT FOUND
+   ============================================================ */
+.nf {
+  max-width: 560px; margin: 0 auto;
+  padding: 96px 24px; text-align: center;
+}
+.nf .code {
+  font-size: 12px; text-transform: uppercase; letter-spacing: 0.3em;
+  color: var(--accent); font-weight: 600;
+}
+.nf h1 { margin-top: 16px; font-size: clamp(32px, 5vw, 48px); }
+.nf p { margin-top: 16px; color: var(--text-muted); font-size: 16px; line-height: 1.6; }
+.nf .btn { margin-top: 32px; }
+
+/* utility */
+.hidden { display: none !important; }
+.center { text-align: center; }
+.mt-24 { margin-top: 24px; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ==================== NAVBAR ==================== -->
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="#/" class="logo" data-link>Story<span>Platform</span></a>
+      <nav class="nav-links">
+        <a href="#/stories" data-link>Stories</a>
+        <a href="#/categories" data-link>Categories</a>
+        <a href="#/authors" data-link>Authors</a>
+        <a href="#/library" data-link>Library</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" id="searchBtn" aria-label="Search">🔍</button>
+        <button class="icon-btn" id="themeBtn" aria-label="Toggle theme">🌙</button>
+        <a href="#/dashboard" class="btn-dashboard" data-link>Dashboard</a>
+        <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN ==================== -->
+  <main class="main" id="app"></main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <h4>Story Platform</h4>
+        <p class="desc">A quiet home for stories worth slowing down for. Fiction, essays, and small epics — curated by hand.</p>
+      </div>
+      <div>
+        <h5>Explore</h5>
+        <ul>
+          <li><a href="#/stories" data-link>Stories</a></li>
+          <li><a href="#/categories" data-link>Categories</a></li>
+          <li><a href="#/authors" data-link>Authors</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#/about" data-link>About</a></li>
+          <li><a href="#/contact" data-link>Contact</a></li>
+          <li><a href="#/privacy" data-link>Privacy Policy</a></li>
+          <li><a href="#/terms" data-link>Terms</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Follow</h5>
+        <div class="social">
+          <a href="#" aria-label="Twitter">𝕏</a>
+          <a href="#" aria-label="Instagram">◎</a>
+          <a href="#" aria-label="RSS">◉</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 Story Platform. All rights reserved.</div>
+  </footer>
+
+  <!-- ==================== MOBILE BOTTOM NAV ==================== -->
+  <nav class="bottom-nav" id="bottomNav">
+    <a href="#/" data-link data-route="/"><span class="bi">🏠</span>Home</a>
+    <a href="#/stories" data-link data-route="/stories"><span class="bi">📖</span>Stories</a>
+    <a href="#/search" data-link data-route="/search"><span class="bi">🔍</span>Search</a>
+    <a href="#/library" data-link data-route="/library"><span class="bi">🔖</span>Library</a>
+    <a href="#/profile" data-link data-route="/profile"><span class="bi">👤</span>Profile</a>
+  </nav>
+</div>
+
+<!-- ==================== MODAL ROOT ==================== -->
+<div id="modalRoot"></div>
+<div id="toastRoot" class="toast-stack"></div>
+
+<script>
+/* ============================================================
+   MOCK DATA
+   ============================================================ */
+
+const AUTHORS = [
+  { id: "a1", name: "Elena Marchetti", avatar: "https://i.pravatar.cc/150?img=47", bio: "Writes quiet stories about loud cities.", followers: 12400, storiesCount: 6, joinedAt: "2023-04-12" },
+  { id: "a2", name: "Kai Nakamura", avatar: "https://i.pravatar.cc/150?img=12", bio: "Speculative fiction, coffee-fuelled.", followers: 8320, storiesCount: 4, joinedAt: "2022-11-03" },
+  { id: "a3", name: "Amara Okafor", avatar: "https://i.pravatar.cc/150?img=32", bio: "Myths retold for modern ears.", followers: 21100, storiesCount: 8, joinedAt: "2021-06-20" },
+  { id: "a4", name: "Theo Lindqvist", avatar: "https://i.pravatar.cc/150?img=15", bio: "Nordic noir with a soft heart.", followers: 5600, storiesCount: 3, joinedAt: "2024-01-15" },
+  { id: "a5", name: "Priya Raman", avatar: "https://i.pravatar.cc/150?img=45", bio: "Stories from kitchens and train windows.", followers: 9800, storiesCount: 5, joinedAt: "2022-02-08" },
+  { id: "a6", name: "Marcus Bell", avatar: "https://i.pravatar.cc/150?img=68", bio: "Southern gothic, slow burn.", followers: 4300, storiesCount: 2, joinedAt: "2024-03-01" },
+  { id: "a7", name: "Sofia Alvarez", avatar: "https://i.pravatar.cc/150?img=29", bio: "Magical realism, always.", followers: 15300, storiesCount: 7, joinedAt: "2021-09-11" },
+  { id: "a8", name: "Jonas Weber", avatar: "https://i.pravatar.cc/150?img=52", bio: "Writes about memory and machines.", followers: 7200, storiesCount: 4, joinedAt: "2023-07-22" },
+  { id: "a9", name: "Lila Hart", avatar: "https://i.pravatar.cc/150?img=24", bio: "Fairy tales with teeth.", followers: 18900, storiesCount: 9, joinedAt: "2020-12-05" },
+  { id: "a10", name: "Omar Haddad", avatar: "https://i.pravatar.cc/150?img=60", bio: "Desert epics and small kindnesses.", followers: 6100, storiesCount: 3, joinedAt: "2023-10-18" }
+];
+
+const CATEGORIES = [
+  { id: "c1", name: "Literary Fiction", slug: "literary-fiction", description: "Quiet, character-driven stories.", cover: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&q=80" },
+  { id: "c2", name: "Science Fiction", slug: "science-fiction", description: "Futures near and far.", cover: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80" },
+  { id: "c3", name: "Fantasy", slug: "fantasy", description: "Myth, magic, and maps.", cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80" },
+  { id: "c4", name: "Mystery", slug: "mystery", description: "Clues, questions, quiet dread.", cover: "https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=800&q=80" },
+  { id: "c5", name: "Romance", slug: "romance", description: "Slow burns and second chances.", cover: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800&q=80" },
+  { id: "c6", name: "Horror", slug: "horror", description: "The things we don't say.", cover: "https://images.unsplash.com/photo-1505635552518-3448ff116af3?w=800&q=80" },
+  { id: "c7", name: "Historical", slug: "historical", description: "The past, reimagined.", cover: "https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=800&q=80" },
+  { id: "c8", name: "Poetry", slug: "poetry", description: "Short, sharp, luminous.", cover: "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=80" },
+  { id: "c9", name: "Essays", slug: "essays", description: "Thinking out loud.", cover: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=800&q=80" },
+  { id: "c10", name: "Children", slug: "children", description: "For the very young and very brave.", cover: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800&q=80" },
+  { id: "c11", name: "Thriller", slug: "thriller", description: "Hold your breath.", cover: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=800&q=80" }
+];
+
+// Helper to generate placeholder chapter text
+function chapterText(title) {
+  return `## ${title}\n\nThe rain had not stopped for three days. Mira watched it from the window of the bookshop, tracing the same crack in the glass she had traced a thousand times before. Somewhere below, a bell rang — not the shop bell, another one, older, from a church that no longer existed.\n\nShe turned the page. The letter was still there, folded into quarters, the ink slightly blurred. *Come find me*, it said. *Before the winter ends.*\n\nShe had read it so many times the words had stopped meaning anything. And yet — every morning, she came back to it, the way one returns to a bruise, pressing gently to see if it still hurts.\n\nOutside, the street lamps flickered on. The city was beginning to settle into its evening self, the one that belonged to no one in particular. She closed the book. The letter slipped out and drifted to the floor.\n\nShe did not pick it up.`;
+}
+
+const STORIES = [
+  { id: "s1", slug: "the-cartographers-daughter", title: "The Cartographer's Daughter", excerpt: "A mapmaker's daughter inherits an atlas of places that don't exist — and a warning never to visit them.", cover: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=1200&q=80", authorId: "a1", categoryId: "c1", tags: ["magical realism", "maps", "family"], chapters: [{ order: 1, title: "The Atlas" }, { order: 2, title: "The First Door" }, { order: 3, title: "The Warning" }], likes: 1240, views: 18400, readingTime: 18, publishedAt: "2026-01-04", featured: true },
+  { id: "s2", slug: "signal-from-titan", title: "Signal from Titan", excerpt: "A lone technician on Saturn's moon receives a message in a language no one has spoken for a century.", cover: "https://images.unsplash.com/photo-1614728263952-84ea256f9679?w=1200&q=80", authorId: "a2", categoryId: "c2", tags: ["space", "first contact", "solitude"], chapters: [{ order: 1, title: "Arrival" }, { order: 2, title: "The Message" }], likes: 980, views: 12100, readingTime: 14, publishedAt: "2026-01-12", featured: true },
+  { id: "s3", slug: "the-salt-queen", title: "The Salt Queen", excerpt: "In a kingdom where memory is currency, a queen must decide what to forget.", cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&q=80", authorId: "a3", categoryId: "c3", tags: ["myth", "memory", "royalty"], chapters: [{ order: 1, title: "The Ledger" }, { order: 2, title: "The Tides" }, { order: 3, title: "The Forgetting" }, { order: 4, title: "The Return" }], likes: 2100, views: 26500, readingTime: 24, publishedAt: "2025-12-20", featured: true },
+  { id: "s4", slug: "the-quiet-house", title: "The Quiet House", excerpt: "A family moves into a house where no sound has ever been heard.", cover: "https://images.unsplash.com/photo-1505635552518-3448ff116af3?w=1200&q=80", authorId: "a4", categoryId: "c6", tags: ["horror", "family", "silence"], chapters: [{ order: 1, title: "Move-In Day" }, { order: 2, title: "The First Night" }], likes: 760, views: 9800, readingTime: 12, publishedAt: "2026-01-18" },
+  { id: "s5", slug: "train-to-coimbatore", title: "Train to Coimbatore", excerpt: "Two strangers share a compartment, a tiffin, and the truth.", cover: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1200&q=80", authorId: "a5", categoryId: "c1", tags: ["travel", "kindness", "india"], chapters: [{ order: 1, title: "Departure" }, { order: 2, title: "The Tiffin" }, { order: 3, title: "Arrival" }], likes: 1450, views: 17300, readingTime: 16, publishedAt: "2025-11-30" },
+  { id: "s6", slug: "the-last-record-store", title: "The Last Record Store", excerpt: "On the day vinyl dies, a shopkeeper plays one final song.", cover: "https://images.unsplash.com/photo-1526397751294-331021109fbd?w=1200&q=80", authorId: "a6", categoryId: "c1", tags: ["music", "nostalgia", "loss"], chapters: [{ order: 1, title: "Side A" }, { order: 2, title: "Side B" }], likes: 620, views: 7400, readingTime: 10, publishedAt: "2026-02-02" },
+  { id: "s7", slug: "the-orange-tree", title: "The Orange Tree", excerpt: "Every year, the tree in the courtyard blooms out of season. This year, someone is watching.", cover: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=1200&q=80", authorId: "a7", categoryId: "c3", tags: ["magical realism", "family", "secrets"], chapters: [{ order: 1, title: "Spring, Out of Season" }, { order: 2, title: "The Watcher" }, { order: 3, title: "The Harvest" }], likes: 1880, views: 22400, readingTime: 20, publishedAt: "2025-10-14", featured: true },
+  { id: "s8", slug: "memory-machine", title: "The Memory Machine", excerpt: "A device that lets you relive any moment — for a price.", cover: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&q=80", authorId: "a8", categoryId: "c2", tags: ["tech", "memory", "ethics"], chapters: [{ order: 1, title: "The Demo" }, { order: 2, title: "The Price" }], likes: 840, views: 10200, readingTime: 13, publishedAt: "2026-01-25" },
+  { id: "s9", slug: "the-wolf-who-learned-to-knit", title: "The Wolf Who Learned to Knit", excerpt: "A fairy tale about a wolf, a grandmother, and a very warm scarf.", cover: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=1200&q=80", authorId: "a9", categoryId: "c10", tags: ["fairy tale", "cozy", "subversion"], chapters: [{ order: 1, title: "The Forest" }, { order: 2, title: "The Yarn" }, { order: 3, title: "The Scarf" }], likes: 3200, views: 41000, readingTime: 9, publishedAt: "2025-09-01", featured: true },
+  { id: "s10", slug: "the-desert-library", title: "The Desert Library", excerpt: "A library appears in the dunes once a year. It stays for one night.", cover: "https://images.unsplash.com/photo-1547234935-80c7145ec969?w=1200&q=80", authorId: "a10", categoryId: "c3", tags: ["library", "desert", "wonder"], chapters: [{ order: 1, title: "The Dunes" }, { order: 2, title: "The Librarian" }], likes: 1100, views: 13600, readingTime: 15, publishedAt: "2025-12-05" },
+  { id: "s11", slug: "the-glass-orchard", title: "The Glass Orchard", excerpt: "In a valley where fruit grows from glass, a girl learns to listen to the trees.", cover: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1200&q=80", authorId: "a1", categoryId: "c3", tags: ["fantasy", "nature", "coming of age"], chapters: [{ order: 1, title: "The Valley" }, { order: 2, title: "The First Listen" }], likes: 940, views: 11200, readingTime: 17, publishedAt: "2025-11-18" },
+  { id: "s12", slug: "letters-to-no-one", title: "Letters to No One", excerpt: "An epistolary story about a woman who writes letters to an address that doesn't exist.", cover: "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1200&q=80", authorId: "a5", categoryId: "c8", tags: ["letters", "loneliness", "hope"], chapters: [{ order: 1, title: "The First Letter" }, { order: 2, title: "The Reply" }], likes: 1600, views: 19200, readingTime: 11, publishedAt: "2025-10-28" },
+  { id: "s13", slug: "the-night-shift", title: "The Night Shift", excerpt: "A hospital security guard notices something strange in room 312.", cover: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1200&q=80", authorId: "a4", categoryId: "c11", tags: ["thriller", "hospital", "suspense"], chapters: [{ order: 1, title: "Room 312" }, { order: 2, title: "The Chart" }, { order: 3, title: "Morning" }], likes: 2100, views: 24800, readingTime: 19, publishedAt: "2026-01-08" },
+  { id: "s14", slug: "the-tea-master", title: "The Tea Master", excerpt: "A retired tea master in Kyoto takes on one final student.", cover: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=1200&q=80", authorId: "a5", categoryId: "c1", tags: ["japan", "mentorship", "quiet"], chapters: [{ order: 1, title: "The Shop" }, { order: 2, title: "The Lesson" }], likes: 1320, views: 15800, readingTime: 14, publishedAt: "2025-09-22" },
+  { id: "s15", slug: "the-sea-between-us", title: "The Sea Between Us", excerpt: "Two lighthouse keepers on opposite shores fall in love through Morse code.", cover: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80", authorId: "a7", categoryId: "c5", tags: ["romance", "sea", "longing"], chapters: [{ order: 1, title: "First Signal" }, { order: 2, title: "Storm" }, { order: 3, title: "The Crossing" }], likes: 2800, views: 33200, readingTime: 22, publishedAt: "2025-08-15", featured: true },
+  { id: "s16", slug: "the-clockmakers-apprentice", title: "The Clockmaker's Apprentice", excerpt: "An apprentice discovers her master's clocks can rewind more than time.", cover: "https://images.unsplash.com/photo-1495364141860-b0d03eccd065?w=1200&q=80", authorId: "a8", categoryId: "c3", tags: ["time", "apprentice", "magic"], chapters: [{ order: 1, title: "The Workshop" }, { order: 2, title: "The Rewind" }], likes: 1180, views: 14100, readingTime: 16, publishedAt: "2025-12-30" },
+  { id: "s17", slug: "the-last-broadcast", title: "The Last Broadcast", excerpt: "A radio host in a dying town keeps broadcasting to no one — until someone answers.", cover: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1200&q=80", authorId: "a2", categoryId: "c2", tags: ["radio", "apocalypse", "hope"], chapters: [{ order: 1, title: "The Signal" }, { order: 2, title: "The Answer" }], likes: 890, views: 10900, readingTime: 13, publishedAt: "2026-02-10" },
+  { id: "s18", slug: "the-paper-garden", title: "The Paper Garden", excerpt: "A boy folds paper flowers for his grandmother, and one of them blooms.", cover: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=1200&q=80", authorId: "a9", categoryId: "c10", tags: ["origami", "grandmother", "magic"], chapters: [{ order: 1, title: "The Fold" }, { order: 2, title: "The Bloom" }], likes: 2400, views: 28100, readingTime: 8, publishedAt: "2025-07-04" },
+  { id: "s19", slug: "the-silent-instrument", title: "The Silent Instrument", excerpt: "A violinist loses her hearing and discovers a new way to play.", cover: "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=1200&q=80", authorId: "a6", categoryId: "c1", tags: ["music", "loss", "reinvention"], chapters: [{ order: 1, title: "The Concert" }, { order: 2, title: "The Silence" }, { order: 3, title: "The Vibration" }], likes: 1750, views: 20100, readingTime: 18, publishedAt: "2025-11-11" },
+  { id: "s20", slug: "the-map-of-small-things", title: "The Map of Small Things", excerpt: "An essay collection about noticing — doorknobs, dust, the sound of a kettle.", cover: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=1200&q=80", authorId: "a3", categoryId: "c9", tags: ["essays", "attention", "ordinary"], chapters: [{ order: 1, title: "On Doorknobs" }, { order: 2, title: "On Dust" }], likes: 980, views: 12400, readingTime: 12, publishedAt: "2025-10-01" }
+];
+
+const COMMENTS = [
+  { id: "cm1", storyId: "s1", userName: "Rhea", userAvatar: "https://i.pravatar.cc/100?img=5", content: "The atlas conceit is gorgeous. I kept thinking about Borges.", createdAt: "2026-01-06", likes: 24 },
+  { id: "cm2", storyId: "s1", userName: "Dev", userAvatar: "https://i.pravatar.cc/100?img=8", content: "Chapter 2 broke me a little.", createdAt: "2026-01-07", likes: 11 },
+  { id: "cm3", storyId: "s3", userName: "Noor", userAvatar: "https://i.pravatar.cc/100?img=20", content: "The memory-as-currency idea is so rich. More please.", createdAt: "2025-12-22", likes: 40 },
+  { id: "cm4", storyId: "s9", userName: "Sam", userAvatar: "https://i.pravatar.cc/100?img=33", content: "I did not expect to cry about a wolf knitting. And yet.", createdAt: "2025-09-03", likes: 87 },
+  { id: "cm5", storyId: "s15", userName: "Mira", userAvatar: "https://i.pravatar.cc/100?img=44", content: "The Morse code passages are so tender. Beautiful work.", createdAt: "2025-08-20", likes: 52 }
+];
+
+/* ============================================================
+   STATE / STORAGE HOOKS
+   ============================================================ */
+
+const Storage = {
+  get(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch { return fallback; }
+  },
+  set(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+  }
+};
+
+const state = {
+  theme: Storage.get("theme", "light"),
+  bookmarks: Storage.get("bookmarks", []),
+  likes: Storage.get("likes", []),
+  follows: Storage.get("follows", []),
+  progress: Storage.get("progress", {}), // { storyId: percent }
+  userComments: Storage.get("userComments", [])
+};
+
+function applyTheme() {
+  document.documentElement.dataset.theme = state.theme;
+  const btn = document.getElementById("themeBtn");
+  if (btn) btn.textContent = state.theme === "dark" ? "☀️" : state.theme === "sepia" ? "📜" : "🌙";
+  Storage.set("theme", state.theme);
+}
+
+function cycleTheme() {
+  const order = ["light", "sepia", "dark"];
+  const i = order.indexOf(state.theme);
+  state.theme = order[(i + 1) % order.length];
+  applyTheme();
+}
+
+function toggleBookmark(id) {
+  const i = state.bookmarks.indexOf(id);
+  if (i >= 0) { state.bookmarks.splice(i, 1); showToast("Removed from library"); }
+  else { state.bookmarks.push(id); showToast("Saved to library ★"); }
+  Storage.set("bookmarks", state.bookmarks);
+  updateBottomNav();
+}
+
+function toggleLike(id) {
+  const i = state.likes.indexOf(id);
+  if (i >= 0) state.likes.splice(i, 1);
+  else state.likes.push(id);
+  Storage.set("likes", state.likes);
+}
+
+function toggleFollow(id) {
+  const i = state.follows.indexOf(id);
+  if (i >= 0) { state.follows.splice(i, 1); showToast("Unfollowed"); }
+  else { state.follows.push(id); showToast("Now following ✦"); }
+  Storage.set("follows", state.follows);
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+function showToast(msg) {
+  const root = document.getElementById("toastRoot");
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.textContent = msg;
+  root.appendChild(el);
+  setTimeout(() => {
+    el.style.transition = "opacity 300ms, transform 300ms";
+    el.style.opacity = "0";
+    el.style.transform = "translateY(-8px)";
+    setTimeout(() => el.remove(), 300);
+  }, 2400);
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function getAuthor(id) { return AUTHORS.find(a => a.id === id); }
+function getCategory(id) { return CATEGORIES.find(c => c.id === id); }
+function getStory(slug) { return STORIES.find(s => s.slug === slug); }
+function getCommentsFor(storyId) {
+  return COMMENTS.filter(c => c.storyId === storyId)
+    .concat(state.userComments.filter(c => c.storyId === storyId));
+}
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+}
+function formatNumber(n) {
+  if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, "") + "k";
+  return String(n);
+}
+
+/* ============================================================
+   COMPONENTS (render functions)
+   ============================================================ */
+
+function StoryCard(story) {
+  const saved = state.bookmarks.includes(story.id);
+  return `
+    <article class="story-card" onclick="navigate('/story/${story.slug}')">
+      <div class="cover-wrap">
+        <img src="${story.cover}" alt="${escapeHtml(story.title)}" loading="lazy" />
+        <div class="cover-overlay"></div>
+        <button class="bookmark-btn ${saved ? "saved" : ""}" onclick="event.stopPropagation(); toggleBookmark('${story.id}'); rerender();" aria-label="Bookmark">${saved ? "★" : "☆"}</button>
+        <div class="cover-meta">
+          <div class="rt">${story.readingTime} min read</div>
+          <h3>${escapeHtml(story.title)}</h3>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function CategoryCard(cat) {
+  const count = STORIES.filter(s => s.categoryId === cat.id).length;
+  return `
+    <div class="category-card" onclick="navigate('/category/${cat.slug}')">
+      <img src="${cat.cover}" alt="${escapeHtml(cat.name)}" loading="lazy" />
+      <div class="body">
+        <h3>${escapeHtml(cat.name)}</h3>
+        <p>${escapeHtml(cat.description)}</p>
+        <div class="count">${count} stories</div>
+      </div>
+    </div>
+  `;
+}
+
+function AuthorCard(author) {
+  const following = state.follows.includes(author.id);
+  return `
+    <div class="author-card">
+      <img src="${author.avatar}" alt="${escapeHtml(author.name)}" onclick="navigate('/author/${author.id}')" style="cursor:pointer" />
+      <h3 onclick="navigate('/author/${author.id}')" style="cursor:pointer">${escapeHtml(author.name)}</h3>
+      <p>${escapeHtml(author.bio)}</p>
+      <button class="follow-btn ${following ? "following" : ""}" onclick="toggleFollow('${author.id}'); rerender();">
+        ${following ? "Following" : "Follow"}
+      </button>
+    </div>
+  `;
+}
+
+function StoryCardSkeleton() {
+  return `
+    <div>
+      <div class="skeleton skel-card-cover"></div>
+      <div class="skeleton skel-line"></div>
+      <div class="skeleton skel-line short"></div>
+    </div>
+  `;
+}
+
+function EmptyState({ icon, title, desc, actionLabel, actionHref }) {
+  return `
+    <div class="empty">
+      ${icon ? `<div class="icon">${icon}</div>` : ""}
+      <h3>${escapeHtml(title)}</h3>
+      <p>${escapeHtml(desc)}</p>
+      ${actionLabel ? `<div class="action"><a href="#${actionHref}" class="btn btn-primary" data-link>${escapeHtml(actionLabel)}</a></div>` : ""}
+    </div>
+  `;
+}
+
+/* ============================================================
+   PAGES
+   ============================================================ */
+
+function HomePage() {
+  const featured = STORIES.filter(s => s.featured).slice(0, 3);
+  const latest = STORIES.slice(0, 8);
+  const topAuthors = AUTHORS.slice(0, 4);
+  const hero = featured[0];
+  const heroAuthor = getAuthor(hero.authorId);
+
+  return `
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="hero-eyebrow">Issue No. 12 · January 2026</div>
+          <h1>Stories worth<br/>slowing down for.</h1>
+          <p class="lead">A curated home for short fiction, essays, and quiet epics. Read, save, and follow the writers you love.</p>
+          <div class="hero-actions">
+            <a href="#/stories" class="btn btn-primary btn-lg" data-link>Start reading</a>
+            <a href="#/authors" class="btn btn-outline btn-lg" data-link>Meet the authors</a>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <img src="${hero.cover}" alt="${escapeHtml(hero.title)}" />
+          <div class="hero-badge">
+            <div class="eyebrow">Editor's pick</div>
+            <div class="title">${escapeHtml(hero.title)}</div>
+            <div class="author">by ${escapeHtml(heroAuthor.name)}</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURED -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Featured this week</h2>
+            <p>Hand-picked by our editors.</p>
+          </div>
+          <a href="#/stories" class="section-link" data-link>View all →</a>
+        </div>
+        <div class="story-grid story-grid-3" id="featuredGrid">
+          ${featured.map(StoryCard).join("")}
+        </div>
+      </div>
+    </section>
+
+    <!-- CATEGORIES -->
+    <section class="section section-surface">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Browse by mood</h2>
+            <p>Find the right story for right now.</p>
+          </div>
+          <a href="#/categories" class="section-link" data-link>All categories →</a>
+        </div>
+        <div class="category-row">
+          ${CATEGORIES.map(CategoryCard).join("")}
+        </div>
+      </div>
+    </section>
+
+    <!-- LATEST -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>Latest stories</h2>
+        </div>
+        <div class="story-grid" id="latestGrid">
+          ${Array.from({ length: 8 }).map(StoryCardSkeleton).join("")}
+        </div>
+      </div>
+    </section>
+
+    <!-- AUTHORS -->
+    <section class="section section-surface">
+      <div class="container">
+        <div class="section-head">
+          <h2>Writers to follow</h2>
+          <a href="#/authors" class="section-link" data-link>All authors →</a>
+        </div>
+        <div class="author-grid">
+          ${topAuthors.map(AuthorCard).join("")}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function StoriesPage() {
+  return `
+    <div class="container">
+      <div class="page-head">
+        <h1>All stories</h1>
+        <p>Browse the full collection — filter by category to find your next read.</p>
+      </div>
+      <div class="filter-bar" id="filterBar">
+        <button class="chip active" data-cat="all">All</button>
+        ${CATEGORIES.map(c => `<button class="chip" data-cat="${c.id}">${escapeHtml(c.name)}</button>`).join("")}
+      </div>
+      <div class="story-grid" id="storiesGrid">
+        ${STORIES.map(StoryCard).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function CategoriesPage() {
+  return `
+    <div class="container">
+      <div class="page-head">
+        <h1>Categories</h1>
+        <p>Every kind of story we publish, from quiet fiction to speculative futures.</p>
+      </div>
+      <div class="story-grid story-grid-3">
+        ${CATEGORIES.map(CategoryCard).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function AuthorsPage() {
+  return `
+    <div class="container">
+      <div class="page-head">
+        <h1>Authors</h1>
+        <p>The writers behind the stories. Follow the ones you love.</p>
+      </div>
+      <div class="author-grid">
+        ${AUTHORS.map(AuthorCard).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function StoryDetailPage(slug) {
+  const story = getStory(slug);
+  if (!story) return NotFoundPage();
+  const author = getAuthor(story.authorId);
+  const category = getCategory(story.categoryId);
+  const saved = state.bookmarks.includes(story.id);
+  const liked = state.likes.includes(story.id);
+  const comments = getCommentsFor(story.id);
+
+  // Build chapter content
+  const chaptersHtml = story.chapters.map(ch => {
+    const text = chapterText(ch.title);
+    // convert `## title` and `*emphasis*` lightly
+    const html = text
+      .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .split('\n\n')
+      .map(p => p.startsWith('<h2>') ? p : `<p>${p}</p>`)
+      .join('');
+    return `<div class="chapter" data-chapter="${ch.order}">${html}</div>`;
+  }).join('');
+
+  return `
+    <div class="reader-progress"><div class="reader-progress-bar" id="readerBar"></div></div>
+
+    <div class="story-header">
+      <a class="back" onclick="history.back()">← Back to stories</a>
+      <div style="margin-top:24px;font-size:11px;text-transform:uppercase;letter-spacing:0.15em;color:var(--accent);font-weight:600;">
+        ${escapeHtml(category.name)}
+      </div>
+      <h1>${escapeHtml(story.title)}</h1>
+      <p class="excerpt">${escapeHtml(story.excerpt)}</p>
+      <div class="story-meta">
+        <img src="${author.avatar}" alt="" />
+        <div>
+          <div class="name">${escapeHtml(author.name)}</div>
+          <div class="sub">${story.readingTime} min read · ${story.publishedAt}</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-outline btn-sm" onclick="toggleBookmark('${story.id}'); rerender();">
+            ${saved ? "★ Saved" : "☆ Save"}
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="toggleLike('${story.id}'); rerender();">
+            ${liked ? "♥ Liked" : "♡ Like"}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="reader-content" id="readerContent">
+      ${chaptersHtml}
+    </div>
+
+    <div class="chapter-nav">
+      <button id="prevChapter" disabled>← Previous chapter</button>
+      <span class="progress" id="chapterProgress">Chapter 1 of ${story.chapters.length}</span>
+      <button id="nextChapter">Next chapter →</button>
+    </div>
+
+    <div class="comments">
+      <h2>Comments (${comments.length})</h2>
+      <form class="comment-form" onsubmit="addComment(event, '${story.id}')">
+        <input type="text" id="commentInput" placeholder="Add a thoughtful comment…" />
+        <button type="submit" class="btn btn-primary btn-sm">Post</button>
+      </form>
+      <div class="comment-list">
+        ${comments.length === 0 ? EmptyState({ icon: "💬", title: "No comments yet.", desc: "Be the first to share your thoughts." }) : comments.map(c => `
+          <div class="comment">
+            <img src="${c.userAvatar}" alt="" />
+            <div style="flex:1">
+              <div class="head">
+                <span class="name">${escapeHtml(c.userName)}</span>
+                <span class="date">${c.createdAt}</span>
+              </div>
+              <div class="text">${escapeHtml(c.content)}</div>
+              <div class="actions">
+                <button>♥ ${c.likes || 0}</button>
+                <button>Reply</button>
+              </div>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+
+    <div class="reading-controls">
+      <button onclick="setTheme('light')" class="${state.theme === 'light' ? 'active' : ''}" title="Light">☀️</button>
+      <button onclick="setTheme('sepia')" class="${state.theme === 'sepia' ? 'active' : ''}" title="Sepia">📜</button>
+      <button onclick="setTheme('dark')" class="${state.theme === 'dark' ? 'active' : ''}" title="Dark">🌙</button>
+    </div>
+  `;
+}
+
+function addComment(e, storyId) {
+  e.preventDefault();
+  const input = document.getElementById("commentInput");
+  const text = input.value.trim();
+  if (!text) return;
+  state.userComments.push({
+    id: "uc" + Date.now(),
+    storyId,
+    userName: "You",
+    userAvatar: "https://i.pravatar.cc/100?img=1",
+    content: text,
+    createdAt: new Date().toISOString().slice(0, 10),
+    likes: 0
+  });
+  Storage.set("userComments", state.userComments);
+  input.value = "";
+  rerender();
+  showToast("Comment posted");
+}
+
+function setTheme(t) {
+  state.theme = t;
+  applyTheme();
+  rerender();
+}
+
+function AuthorDetailPage(id) {
+  const author = getAuthor(id);
+  if (!author) return NotFoundPage();
+  const stories = STORIES.filter(s => s.authorId === id);
+  const following = state.follows.includes(author.id);
+
+  return `
+    <div class="container">
+      <div class="page-head">
+        <div class="profile-header">
+          <img src="${author.avatar}" alt="${escapeHtml(author.name)}" />
+          <div style="flex:1">
+            <h1>${escapeHtml(author.name)}</h1>
+            <p class="bio">${escapeHtml(author.bio)}</p>
+            <div class="stats">
+              <div class="stat"><div class="n">${stories.length}</div><div class="l">Stories</div></div>
+              <div class="stat"><div class="n">${formatNumber(author.followers)}</div><div class="l">Followers</div></div>
+              <div class="stat"><div class="n">${author.joinedAt.slice(0, 4)}</div><div class="l">Joined</div></div>
+            </div>
+          </div>
+          <button class="btn ${following ? 'btn-primary' : 'btn-outline'}" onclick="toggleFollow('${author.id}'); rerender();">
+            ${following ? "Following" : "Follow"}
+          </button>
+        </div>
+      </div>
+      <h2 style="font-size:22px;margin:32px 0 24px;">Stories by ${escapeHtml(author.name)}</h2>
+      ${stories.length === 0 ? EmptyState({ icon: "📖", title: "No stories yet.", desc: "This author hasn't published anything yet." }) : `
+        <div class="story-grid">${stories.map(StoryCard).join("")}</div>
+      `}
+    </div>
+  `;
+}
+
+function CategoryDetailPage(slug) {
+  const cat = CATEGORIES.find(c => c.slug === slug);
+  if (!cat) return NotFoundPage();
+  const stories = STORIES.filter(s => s.categoryId === cat.id);
+
+  return `
+    <div class="container">
+      <div class="page-head">
+        <h1>${escapeHtml(cat.name)}</h1>
+        <p>${escapeHtml(cat.description)}</p>
+      </div>
+      ${stories.length === 0 ? EmptyState({ icon: "📚", title: "No stories found.", desc: "There are no stories in this category yet." }) : `
+        <div class="story-grid">${stories.map(StoryCard).join("")}</div>
+      `}
+    </div>
+  `;
+}
+
+function LibraryPage() {
+  const saved = STORIES.filter(s => state.bookmarks.includes(s.id));
+  return `
+    <div class="container">
+      <div class="page-head">
+        <h1>Your Library</h1>
+        <p>Stories you've saved for later.</p>
+      </div>
+      ${saved.length === 0
+        ? EmptyState({ icon: "🔖", title: "No saved stories yet.", desc: "Start exploring and save stories you love.", actionLabel: "Explore stories", actionHref: "/stories" })
+        : `<div class="story-grid">${saved.map(StoryCard).join("")}</div>`}
+    </div>
+  `;
+}
+
+function ProfilePage() {
+  const user = { name: "Rhea Sen", avatar: "https://i.pravatar.cc/150?img=5", bio: "Reader. Collector of sentences. Occasional night owl.", joined: "2024" };
+  const recentlyRead = STORIES.slice(0, 3);
+  const savedCount = state.bookmarks.length;
+  const likedCount = state.likes.length;
+
+  return `
+    <div class="container">
+      <div class="page-head">
+        <div class="profile-header">
+          <img src="${user.avatar}" alt="${escapeHtml(user.name)}" />
+          <div style="flex:1">
+            <h1>${escapeHtml(user.name)}</h1>
+            <p class="bio">${escapeHtml(user.bio)}</p>
+            <div class="stats">
+              <div class="stat"><div class="n">${savedCount}</div><div class="l">Saved</div></div>
+              <div class="stat"><div class="n">${likedCount}</div><div class="l">Liked</div></div>
+              <div class="stat"><div class="n">${user.joined}</div><div class="l">Joined</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 style="font-size:22px;margin:24px 0;">Recently read</h2>
+      ${recentlyRead.length === 0
+        ? EmptyState({ icon: "📖", title: "Your reading history is empty.", desc: "Stories you read will show up here." })
+        : `<div class="story-grid">${recentlyRead.map(StoryCard).join("")}</div>`}
+    </div>
+  `;
+}
+
+function DashboardPage() {
+  const stats = [
+    { label: "Stories", value: 12 },
+    { label: "Views", value: "48.2k" },
+    { label: "Followers", value: "3,410" },
+    { label: "Drafts", value: 3 }
+  ];
+  const recent = STORIES.slice(0, 5);
+
+  return `
+    <div class="container">
+      <div class="page-head">
+        <h1>Dashboard</h1>
+        <p>An overview of your writing.</p>
+      </div>
+      <div class="dash-stats">
+        ${stats.map(s => `<div class="stat-card"><div class="label">${s.label}</div><div class="value">${s.value}</div></div>`).join("")}
+      </div>
+      <div class="dash-grid">
+        <div class="panel">
+          <h3>Recent stories</h3>
+          <ul>
+            ${recent.map(s => `
+              <li>
+                <img src="${s.cover}" alt="" />
+                <div>
+                  <div class="title">${escapeHtml(s.title)}</div>
+                  <div class="sub">${formatNumber(s.views)} views · ${s.likes} likes</div>
+                </div>
+                <button class="edit">Edit</button>
+              </li>
+            `).join("")}
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Quick actions</h3>
+          <div class="quick-actions">
+            <button class="btn btn-primary" onclick="showToast('New story editor coming soon')">New story</button>
+            <button class="btn btn-secondary" onclick="showToast('Drafts panel')">Manage drafts</button>
+            <button class="btn btn-outline" onclick="showToast('Analytics view')">View analytics</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function SearchPage() {
+  return `
+    <div class="container">
+      <div class="page-head">
+        <h1>Search</h1>
+        <p>Find stories by title, tag, or author.</p>
+      </div>
+      <input class="search-input" id="searchPageInput" placeholder="Type to search…" autofocus />
+      <div class="search-results" id="searchPageResults" style="margin-top:24px;"></div>
+    </div>
+  `;
+}
+
+function NotFoundPage() {
+  return `
+    <div class="nf">
+      <div class="code">404</div>
+      <h1>Lost between the pages?</h1>
+      <p>The story you're looking for doesn't seem to exist.</p>
+      <a href="#/" class="btn btn-primary btn-lg" data-link>Back to Home</a>
+    </div>
+  `;
+}
+
+/* ============================================================
+   ROUTER
+   ============================================================ */
+let currentRoute = "/";
+
+function parseHash() {
+  const hash = window.location.hash.replace(/^#/, "") || "/";
+  return hash;
+}
+
+function navigate(path) {
+  window.location.hash = "#" + path;
+}
+
+function updateBottomNav() {
+  document.querySelectorAll("#bottomNav a").forEach(a => {
+    const r = a.getAttribute("data-route");
+    const active = r === currentRoute || (r === "/" && currentRoute === "/");
+    a.classList.toggle("active", active);
+  });
+}
+
+function render() {
+  const path = parseHash();
+  currentRoute = path;
+  const app = document.getElementById("app");
+  let html = "";
+
+  if (path === "/" || path === "") {
+    html = HomePage();
+  } else if (path === "/stories") {
+    html = StoriesPage();
+  } else if (path === "/categories") {
+    html = CategoriesPage();
+  } else if (path === "/authors") {
+    html = AuthorsPage();
+  } else if (path === "/library") {
+    html = LibraryPage();
+  } else if (path === "/profile") {
+    html = ProfilePage();
+  } else if (path === "/dashboard") {
+    html = DashboardPage();
+  } else if (path === "/search") {
+    html = SearchPage();
+  } else if (path.startsWith("/story/")) {
+    html = StoryDetailPage(path.replace("/story/", ""));
+  } else if (path.startsWith("/author/")) {
+    html = AuthorDetailPage(path.replace("/author/", ""));
+  } else if (path.startsWith("/category/")) {
+    html = CategoryDetailPage(path.replace("/category/", ""));
+  } else if (path === "/about" || path === "/contact" || path === "/privacy" || path === "/terms") {
+    html = `
+      <div class="container">
+        <div class="page-head">
+          <h1>${path.slice(1).charAt(0).toUpperCase() + path.slice(2)}</h1>
+          <p>This page is part of the demo. Content coming soon.</p>
+        </div>
+      </div>
+    `;
+  } else {
+    html = NotFoundPage();
+  }
+
+  app.innerHTML = html;
+  window.scrollTo({ top: 0, behavior: "instant" });
+  updateBottomNav();
+
+  // Post-render hooks
+  afterRender(path);
+}
+
+function afterRender(path) {
+  // Home: simulate loading for latest grid
+  if (path === "/" || path === "") {
+    const latest = STORIES.slice(0, 8);
+    setTimeout(() => {
+      const grid = document.getElementById("latestGrid");
+      if (grid) grid.innerHTML = latest.map(StoryCard).join("");
+    }, 600);
+  }
+
+  // Stories: filter chips
+  if (path === "/stories") {
+    const bar = document.getElementById("filterBar");
+    const grid = document.getElementById("storiesGrid");
+    if (bar && grid) {
+      bar.addEventListener("click", (e) => {
+        const btn = e.target.closest(".chip");
+        if (!btn) return;
+        bar.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+        btn.classList.add("active");
+        const cat = btn.dataset.cat;
+        const filtered = cat === "all" ? STORIES : STORIES.filter(s => s.categoryId === cat);
+        grid.innerHTML = filtered.length
+          ? filtered.map(StoryCard).join("")
+          : EmptyState({ icon: "📚", title: "No stories found.", desc: "Try a different category." });
+      });
+    }
+  }
+
+  // Story detail: reading progress + chapter nav
+  if (path.startsWith("/story/")) {
+    const content = document.getElementById("readerContent");
+    const bar = document.getElementById("readerBar");
+    const story = getStory(path.replace("/story/", ""));
+
+    if (content && bar && story) {
+      // Scroll progress
+      const onScroll = () => {
+        const rect = content.getBoundingClientRect();
+        const total = content.offsetHeight - window.innerHeight;
+        const scrolled = Math.max(0, -rect.top);
+        const pct = total > 0 ? Math.min(100, (scrolled / total) * 100) : 0;
+        bar.style.width = pct + "%";
+        state.progress[story.id] = pct;
+        Storage.set("progress", state.progress);
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+    }
+
+    // Chapter navigation (simple: scroll to each chapter)
+    const chapters = story ? story.chapters : [];
+    let chapterIndex = 0;
+    const prevBtn = document.getElementById("prevChapter");
+    const nextBtn = document.getElementById("nextChapter");
+    const progressEl = document.getElementById("chapterProgress");
+
+    function gotoChapter(i) {
+      chapterIndex = Math.max(0, Math.min(chapters.length - 1, i));
+      const els = document.querySelectorAll(".chapter");
+      const el = els[chapterIndex];
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (progressEl) progressEl.textContent = `Chapter ${chapterIndex + 1} of ${chapters.length}`;
+      if (prevBtn) prevBtn.disabled = chapterIndex === 0;
+      if (nextBtn) nextBtn.disabled = chapterIndex === chapters.length - 1;
+    }
+
+    if (prevBtn) prevBtn.addEventListener("click", () => gotoChapter(chapterIndex - 1));
+    if (nextBtn) nextBtn.addEventListener("click", () => gotoChapter(chapterIndex + 1));
+  }
+
+  // Search page
+  if (path === "/search") {
+    const input = document.getElementById("searchPageInput");
+    const results = document.getElementById("searchPageResults");
+    if (input && results) {
+      const doSearch = () => {
+        const q = input.value.trim().toLowerCase();
+        if (!q) { results.innerHTML = ""; return; }
+        const found = STORIES.filter(s =>
+          s.title.toLowerCase().includes(q) ||
+          s.tags.some(t => t.toLowerCase().includes(q)) ||
+          getAuthor(s.authorId).name.toLowerCase().includes(q)
+        );
+        if (found.length === 0) {
+          results.innerHTML = EmptyState({ icon: "🔍", title: "No stories found.", desc: "Try a different search term." });
+        } else {
+          results.innerHTML = `<div class="story-grid">${found.map(StoryCard).join("")}</div>`;
+        }
+      };
+      input.addEventListener("input", doSearch);
+      input.focus();
+    }
+  }
+}
+
+function rerender() {
+  // Re-render only the current route's dynamic bits — simplest: full re-render
+  render();
+}
+
+/* ============================================================
+   MODALS
+   ============================================================ */
+
+function openSearchModal() {
+  const root = document.getElementById("modalRoot");
+  root.innerHTML = `
+    <div class="modal-backdrop" onclick="if(event.target===this) closeModal()">
+      <div class="modal">
+        <input class="search-input" id="modalSearchInput" placeholder="Search stories, authors, tags…" autofocus />
+        <div class="search-results" id="modalSearchResults">
+          <div class="no-results">Start typing to search…</div>
+        </div>
+      </div>
+    </div>
+  `;
+  const input = document.getElementById("modalSearchInput");
+  const results = document.getElementById("modalSearchResults");
+  input.focus();
+  input.addEventListener("input", () => {
+    const q = input.value.trim().toLowerCase();
+    if (!q) {
+      results.innerHTML = '<div class="no-results">Start typing to search…</div>';
+      return;
+    }
+    const found = STORIES.filter(s =>
+      s.title.toLowerCase().includes(q) ||
+      s.tags.some(t => t.toLowerCase().includes(q)) ||
+      getAuthor(s.authorId).name.toLowerCase().includes(q)
+    ).slice(0, 6);
+    if (found.length === 0) {
+      results.innerHTML = '<div class="no-results">No stories found.</div>';
+    } else {
+      results.innerHTML = found.map(s => `
+        <div class="search-item" onclick="closeModal(); navigate('/story/${s.slug}')">
+          <img src="${s.cover}" alt="" />
+          <div>
+            <div class="t">${escapeHtml(s.title)}</div>
+            <div class="s">${s.tags.join(" · ")}</div>
+          </div>
+        </div>
+      `).join("");
+    }
+  });
+  document.addEventListener("keydown", escClose);
+}
+
+function escClose(e) {
+  if (e.key === "Escape") closeModal();
+}
+
+function closeModal() {
+  document.getElementById("modalRoot").innerHTML = "";
+  document.removeEventListener("keydown", escClose);
+}
+
+function openMenu() {
+  const root = document.getElementById("modalRoot");
+  root.innerHTML = `
+    <div class="drawer-backdrop" onclick="closeModal()"></div>
+    <div class="drawer">
+      <div class="drawer-head">
+        <span class="logo">Story<span>Platform</span></span>
+        <button class="icon-btn" onclick="closeModal()">✕</button>
+      </div>
+      <nav>
+        <a href="#/" data-link onclick="closeModal()">Home</a>
+        <a href="#/stories" data-link onclick="closeModal()">Stories</a>
+        <a href="#/categories" data-link onclick="closeModal()">Categories</a>
+        <a href="#/authors" data-link onclick="closeModal()">Authors</a>
+        <a href="#/library" data-link onclick="closeModal()">Library</a>
+        <a href="#/profile" data-link onclick="closeModal()">Profile</a>
+        <a href="#/dashboard" data-link onclick="closeModal()">Dashboard</a>
+      </nav>
+    </div>
+  `;
+  document.addEventListener("keydown", escClose);
+}
+
+/* ============================================================
+   EVENT WIRING
+   ============================================================ */
+document.getElementById("searchBtn").addEventListener("click", openSearchModal);
+document.getElementById("themeBtn").addEventListener("click", cycleTheme);
+document.getElementById("menuBtn").addEventListener("click", openMenu);
+
+window.addEventListener("hashchange", render);
+
+// Intercept data-link clicks so hash navigation works smoothly (browser already does it via href="#/...")
+// No extra work needed since href="#/path" triggers hashchange.
+
+/* ============================================================
+   INIT
+   ============================================================ */
+applyTheme();
+if (!window.location.hash) window.location.hash = "#/";
+render();
+
+// Expose to inline handlers
+window.navigate = navigate;
+window.toggleBookmark = toggleBookmark;
+window.toggleLike = toggleLike;
+window.toggleFollow = toggleFollow;
+window.setTheme = setTheme;
+window.addComment = addComment;
+window.closeModal = closeModal;
+window.rerender = rerender;
+window.showToast = showToast;
+</script>
+</body>
+</html>

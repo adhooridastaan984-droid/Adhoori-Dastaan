@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Story Platform — Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   BASE
+   ============================================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #0a0a0a;
+  color: #e5e5e5;
+  line-height: 1.5;
+  overflow: hidden;
+}
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, textarea, select { font-family: inherit; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #0a0a0a; }
+::-webkit-scrollbar-thumb { background: #262626; border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3a3a; }
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.admin {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  grid-template-rows: 56px 1fr;
+  height: 100vh;
+  width: 100vw;
+}
+.topbar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: #111;
+  border-bottom: 1px solid #262626;
+  z-index: 10;
+}
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.topbar-logo {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+}
+.topbar-logo span { color: #f59e0b; font-weight: 400; }
+.topbar-badge {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  background: #f59e0b;
+  color: #000;
+  border-radius: 4px;
+  font-weight: 700;
+}
+.topbar-actions { display: flex; gap: 8px; align-items: center; }
+.tb-btn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid #262626;
+  background: #161616;
+  color: #e5e5e5;
+  transition: all 0.15s;
+}
+.tb-btn:hover { background: #1f1f1f; border-color: #3a3a3a; }
+.tb-btn.primary { background: #f59e0b; color: #000; border-color: #f59e0b; font-weight: 600; }
+.tb-btn.primary:hover { background: #fbbf24; }
+.tb-btn.danger { color: #f87171; border-color: #3a1a1a; }
+.tb-btn.danger:hover { background: #1f0f0f; }
+
+/* ============================================================
+   SIDEBAR (file tree)
+   ============================================================ */
+.sidebar {
+  background: #0f0f0f;
+  border-right: 1px solid #262626;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.sidebar-head {
+  padding: 14px 16px;
+  border-bottom: 1px solid #1a1a1a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background: #0f0f0f;
+  z-index: 5;
+}
+.sidebar-head h2 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #737373;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+}
+.sidebar-filter {
+  padding: 10px 16px;
+  border-bottom: 1px solid #1a1a1a;
+}
+.sidebar-filter input {
+  width: 100%;
+  padding: 8px 12px;
+  background: #161616;
+  border: 1px solid #262626;
+  border-radius: 6px;
+  color: #e5e5e5;
+  font-size: 12px;
+  outline: none;
+}
+.sidebar-filter input:focus { border-color: #f59e0b; }
+
+.tree { padding: 8px 0 24px; }
+.tree-group { margin-bottom: 4px; }
+.tree-group-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #737373;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+.tree-group-header:hover { color: #a3a3a3; }
+.tree-group-header .arrow { transition: transform 0.15s; font-size: 9px; }
+.tree-group.collapsed .tree-group-header .arrow { transform: rotate(-90deg); }
+.tree-group.collapsed .tree-items { display: none; }
+.tree-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px 7px 28px;
+  font-size: 12.5px;
+  color: #a3a3a3;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.12s;
+  user-select: none;
+}
+.tree-item:hover { background: #161616; color: #e5e5e5; }
+.tree-item.active {
+  background: #1a1a1a;
+  color: #f59e0b;
+  border-left-color: #f59e0b;
+}
+.tree-item .icon { font-size: 12px; opacity: 0.7; width: 14px; text-align: center; }
+.tree-item .label { flex: 1; }
+.tree-item .count {
+  font-size: 10px;
+  background: #1f1f1f;
+  padding: 1px 6px;
+  border-radius: 8px;
+  color: #737373;
+}
+.tree-item.active .count { background: #2a1f08; color: #f59e0b; }
+
+/* ============================================================
+   MAIN PANEL
+   ============================================================ */
+.main-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+}
+.editor-pane, .preview-pane {
+  overflow-y: auto;
+  padding: 24px;
+}
+.editor-pane { border-right: 1px solid #262626; background: #0a0a0a; }
+.preview-pane { background: #0f0f0f; padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+
+.pane-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #1a1a1a;
+}
+.pane-head h1 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.01em;
+}
+.pane-head .subtitle {
+  font-size: 12px;
+  color: #737373;
+  margin-top: 2px;
+}
+.pane-head-actions { display: flex; gap: 8px; }
+
+/* ============================================================
+   FORM
+   ============================================================ */
+.form-section {
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #1a1a1a;
+}
+.form-section:last-child { border-bottom: none; }
+.form-section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #737373;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.form-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #1a1a1a;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+.field:last-child { margin-bottom: 0; }
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: #a3a3a3;
+  margin-bottom: 6px;
+}
+.field label .hint {
+  font-weight: 400;
+  color: #525252;
+  font-size: 11px;
+  margin-left: 6px;
+}
+.field input[type="text"],
+.field input[type="number"],
+.field input[type="url"],
+.field textarea,
+.field select {
+  width: 100%;
+  padding: 9px 12px;
+  background: #161616;
+  border: 1px solid #262626;
+  border-radius: 6px;
+  color: #e5e5e5;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.field input:focus, .field textarea:focus, .field select:focus { border-color: #f59e0b; }
+.field textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.field .color-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.field input[type="color"] {
+  width: 44px;
+  height: 38px;
+  border: 1px solid #262626;
+  border-radius: 6px;
+  background: #161616;
+  cursor: pointer;
+  padding: 2px;
+}
+.field input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+.field input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
+.field .color-value {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+}
+
+/* Buttons list */
+.btn-list { display: flex; flex-direction: column; gap: 8px; }
+.btn-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #111;
+  border: 1px solid #1f1f1f;
+  border-radius: 8px;
+  transition: border-color 0.15s;
+}
+.btn-row:hover { border-color: #2f2f2f; }
+.btn-row .swatch {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+.btn-row .info { flex: 1; min-width: 0; }
+.btn-row .info .name { font-size: 13px; font-weight: 500; color: #e5e5e5; }
+.btn-row .info .meta { font-size: 11px; color: #525252; margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+.btn-row .actions { display: flex; gap: 4px; }
+.icon-mini {
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: #737373;
+  border: 1px solid transparent;
+  transition: all 0.12s;
+}
+.icon-mini:hover { background: #1f1f1f; color: #e5e5e5; border-color: #2f2f2f; }
+.icon-mini.danger:hover { color: #f87171; border-color: #3a1a1a; background: #1a0f0f; }
+
+/* Preview toolbar */
+.preview-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #111;
+  border-bottom: 1px solid #262626;
+  flex-shrink: 0;
+}
+.preview-toolbar-left { display: flex; align-items: center; gap: 8px; }
+.preview-toolbar h2 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #737373;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+}
+.device-tabs { display: flex; background: #0a0a0a; border-radius: 6px; padding: 2px; border: 1px solid #1f1f1f; }
+.device-tab {
+  padding: 5px 10px;
+  font-size: 11px;
+  border-radius: 4px;
+  color: #737373;
+  transition: all 0.12s;
+}
+.device-tab.active { background: #1f1f1f; color: #e5e5e5; }
+.device-tab:hover:not(.active) { color: #a3a3a3; }
+
+.preview-viewport {
+  flex: 1;
+  overflow: auto;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background:
+    linear-gradient(45deg, #0f0f0f 25%, transparent 25%),
+    linear-gradient(-45deg, #0f0f0f 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #0f0f0f 75%),
+    linear-gradient(-45deg, transparent 75%, #0f0f0f 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  background-color: #131313;
+}
+.device-frame {
+  width: 100%;
+  max-width: 1200px;
+  background: var(--preview-bg, #faf9f7);
+  color: var(--preview-text, #1a1a18);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  transition: max-width 0.3s;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+.device-frame.mobile { max-width: 390px; }
+.device-frame.tablet { max-width: 768px; }
+.device-frame iframe {
+  width: 100%;
+  height: 700px;
+  border: none;
+  display: block;
+  background: var(--preview-bg, #faf9f7);
+}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.15s ease-out;
+}
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(12px) } to { opacity: 1; transform: translateY(0) } }
+.modal {
+  background: #111;
+  border: 1px solid #262626;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 24px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  animation: slideUp 0.2s ease-out;
+}
+.modal h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 4px;
+  font-family: 'Inter', sans-serif;
+}
+.modal .modal-sub {
+  font-size: 12px;
+  color: #737373;
+  margin-bottom: 20px;
+}
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #1a1a1a;
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.toast-stack {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.toast {
+  padding: 12px 18px;
+  background: #1a1a1a;
+  border: 1px solid #2f2f2f;
+  border-left: 3px solid #f59e0b;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #e5e5e5;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  animation: slideUp 0.25s ease-out;
+  min-width: 240px;
+}
+.toast.success { border-left-color: #22c55e; }
+.toast.danger { border-left-color: #ef4444; }
+
+/* ============================================================
+   MISC
+   ============================================================ */
+.empty-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px;
+  text-align: center;
+  color: #737373;
+}
+.empty-panel .icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+.empty-panel h3 { font-size: 16px; color: #a3a3a3; margin-bottom: 8px; font-family: 'Inter', sans-serif; }
+.empty-panel p { font-size: 13px; max-width: 360px; line-height: 1.6; }
+
+.changes-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  background: #2a1f08;
+  color: #f59e0b;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.changes-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f59e0b;
+}
+
+@media (max-width: 900px) {
+  .admin { grid-template-columns: 1fr; grid-template-rows: 56px auto 1fr; }
+  .sidebar { max-height: 200px; }
+  .main-panel { grid-template-columns: 1fr; }
+  .editor-pane { border-right: none; border-bottom: 1px solid #262626; }
+  .preview-pane { min-height: 500px; }
+}
+</style>
+</head>
+<body>
+
+<div class="admin">
+  <!-- ==================== TOPBAR ==================== -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">Story<span>Platform</span></div>
+      <span class="topbar-badge">Admin</span>
+      <span id="changesBadge" class="changes-badge" style="display:none;">Unsaved changes</span>
+    </div>
+    <div class="topbar-actions">
+      <button class="tb-btn" onclick="resetAll()">↺ Reset</button>
+      <button class="tb-btn" onclick="exportJSON()">⬇ Export</button>
+      <button class="tb-btn" onclick="importJSON()">⬆ Import</button>
+      <button class="tb-btn primary" onclick="saveAll()">💾 Save</button>
+    </div>
+  </div>
+
+  <!-- ==================== SIDEBAR ==================== -->
+  <aside class="sidebar">
+    <div class="sidebar-head">
+      <h2>Components</h2>
+      <span id="itemCount" style="font-size:11px;color:#525252;"></span>
+    </div>
+    <div class="sidebar-filter">
+      <input type="text" id="treeFilter" placeholder="Filter components…" />
+    </div>
+    <div class="tree" id="tree"></div>
+  </aside>
+
+  <!-- ==================== MAIN ==================== -->
+  <div class="main-panel">
+    <!-- EDITOR -->
+    <div class="editor-pane" id="editorPane">
+      <div class="empty-panel">
+        <div class="icon">←</div>
+        <h3>Select a component</h3>
+        <p>Choose any component from the left sidebar to edit its text, colors, sizes, and behavior. Changes update the live preview instantly.</p>
+      </div>
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="preview-pane">
+      <div class="preview-toolbar">
+        <div class="preview-toolbar-left">
+          <h2>Live Preview</h2>
+          <span id="previewRoute" style="font-size:11px;color:#525252;font-family:'JetBrains Mono',monospace;"></span>
+        </div>
+        <div class="device-tabs">
+          <button class="device-tab active" data-device="desktop" onclick="setDevice('desktop')">🖥 Desktop</button>
+          <button class="device-tab" data-device="tablet" onclick="setDevice('tablet')">📱 Tablet</button>
+          <button class="device-tab" data-device="mobile" onclick="setDevice('mobile')">📱 Mobile</button>
+        </div>
+      </div>
+      <div class="preview-viewport">
+        <div class="device-frame" id="deviceFrame">
+          <iframe id="previewFrame"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-stack" id="toastStack"></div>
+<div id="modalRoot"></div>
+
+<script>
+/* ============================================================
+   EDITABLE COMPONENT REGISTRY
+   Each entry: id, group, label, icon, route (for preview), fields
+   Field types: text, textarea, number, color, url, select
+   ============================================================ */
+
+const DEFAULT_CONFIG = {
+  // ---------- GLOBAL THEME ----------
+  "theme.bg":         { group: "Theme", label: "Background",      icon: "🎨", type: "color", value: "#faf9f7" },
+  "theme.surface":    { group: "Theme", label: "Surface",         icon: "🎨", type: "color", value: "#f4f2ee" },
+  "theme.surface2":   { group: "Theme", label: "Surface 2",       icon: "🎨", type: "color", value: "#e9e6df" },
+  "theme.text":       { group: "Theme", label: "Text",            icon: "🎨", type: "color", value: "#1a1a18" },
+  "theme.textMuted":  { group: "Theme", label: "Muted text",      icon: "🎨", type: "color", value: "#6b6862" },
+  "theme.border":     { group: "Theme", label: "Border",          icon: "🎨", type: "color", value: "#e3e0d9" },
+  "theme.accent":     { group: "Theme", label: "Accent",          icon: "🎨", type: "color", value: "#b45309" },
+  "theme.radius":     { group: "Theme", label: "Border radius (px)", icon: "🎨", type: "number", value: 16 },
+
+  // ---------- NAVBAR ----------
+  "nav.logoText":     { group: "Navbar", label: "Logo text",        icon: "🧭", type: "text",  value: "Story" },
+  "nav.logoAccent":   { group: "Navbar", label: "Logo accent",      icon: "🧭", type: "text",  value: "Platform" },
+  "nav.link1":        { group: "Navbar", label: "Link 1",           icon: "🧭", type: "text",  value: "Stories" },
+  "nav.link2":        { group: "Navbar", label: "Link 2",           icon: "🧭", type: "text",  value: "Categories" },
+  "nav.link3":        { group: "Navbar", label: "Link 3",           icon: "🧭", type: "text",  value: "Authors" },
+  "nav.link4":        { group: "Navbar", label: "Link 4",           icon: "🧭", type: "text",  value: "Library" },
+  "nav.ctaText":      { group: "Navbar", label: "CTA button text",  icon: "🧭", type: "text",  value: "Dashboard" },
+  "nav.ctaBg":        { group: "Navbar", label: "CTA background",   icon: "🧭", type: "color", value: "#b45309" },
+  "nav.ctaTextColor": { group: "Navbar", label: "CTA text color",   icon: "🧭", type: "color", value: "#ffffff" },
+  "nav.height":       { group: "Navbar", label: "Navbar height (px)", icon: "🧭", type: "number", value: 64 },
+
+  // ---------- HERO ----------
+  "hero.eyebrow":     { group: "Hero", label: "Eyebrow text",  icon: "🏔", type: "text",     value: "Issue No. 12 · January 2026" },
+  "hero.title":       { group: "Hero", label: "Headline",      icon: "🏔", type: "textarea", value: "Stories worth\nslowing down for." },
+  "hero.lead":        { group: "Hero", label: "Lead paragraph", icon: "🏔", type: "textarea", value: "A curated home for short fiction, essays, and quiet epics. Read, save, and follow the writers you love." },
+  "hero.cta1":        { group: "Hero", label: "CTA 1 text",    icon: "🏔", type: "text",     value: "Start reading" },
+  "hero.cta1Bg":      { group: "Hero", label: "CTA 1 background", icon: "🏔", type: "color", value: "#b45309" },
+  "hero.cta1Text":    { group: "Hero", label: "CTA 1 text color", icon: "🏔", type: "color", value: "#ffffff" },
+  "hero.cta2":        { group: "Hero", label: "CTA 2 text",    icon: "🏔", type: "text",     value: "Meet the authors" },
+  "hero.badgeTitle":  { group: "Hero", label: "Badge title",   icon: "🏔", type: "text",     value: "The Cartographer's Daughter" },
+  "hero.badgeAuthor": { group: "Hero", label: "Badge author",  icon: "🏔", type: "text",     value: "by Elena Marchetti" },
+
+  // ---------- STORY CARD ----------
+  "storyCard.radius":     { group: "Story Card", label: "Cover radius (px)", icon: "📖", type: "number", value: 20 },
+  "storyCard.showTime":   { group: "Story Card", label: "Show reading time", icon: "📖", type: "select", value: "yes", options: ["yes","no"] },
+  "storyCard.showBookmark": { group: "Story Card", label: "Show bookmark button", icon: "📖", type: "select", value: "yes", options: ["yes","no"] },
+  "storyCard.bookmarkColor": { group: "Story Card", label: "Bookmark color", icon: "📖", type: "color", value: "#fbbf24" },
+  "storyCard.hoverScale": { group: "Story Card", label: "Hover scale",       icon: "📖", type: "number", value: 1.06, step: 0.01 },
+
+  // ---------- AUTHOR CARD ----------
+  "authorCard.radius":    { group: "Author Card", label: "Avatar radius (px)", icon: "✍️", type: "number", value: 999 },
+  "authorCard.followBg":  { group: "Author Card", label: "Follow button bg",   icon: "✍️", type: "color",  value: "#b45309" },
+  "authorCard.followText":{ group: "Author Card", label: "Follow button text", icon: "✍️", type: "color",  value: "#ffffff" },
+  "authorCard.label":     { group: "Author Card", label: "Follow label",       icon: "✍️", type: "text",   value: "Follow" },
+  "authorCard.followingLabel": { group: "Author Card", label: "Following label", icon: "✍️", type: "text", value: "Following" },
+
+  // ---------- CATEGORY CARD ----------
+  "categoryCard.radius":  { group: "Category Card", label: "Radius (px)",      icon: "🗂", type: "number", value: 16 },
+  "categoryCard.height":  { group: "Category Card", label: "Image height (px)", icon: "🗂", type: "number", value: 120 },
+
+  // ---------- BUTTONS ----------
+  "btn.primary.bg":     { group: "Buttons", label: "Primary background",  icon: "🔘", type: "color", value: "#b45309" },
+  "btn.primary.text":   { group: "Buttons", label: "Primary text",        icon: "🔘", type: "color", value: "#ffffff" },
+  "btn.primary.radius": { group: "Buttons", label: "Primary radius (px)", icon: "🔘", type: "number", value: 999 },
+  "btn.secondary.bg":   { group: "Buttons", label: "Secondary background", icon: "🔘", type: "color", value: "#e9e6df" },
+  "btn.secondary.text": { group: "Buttons", label: "Secondary text",       icon: "🔘", type: "color", value: "#1a1a18" },
+  "btn.outline.border": { group: "Buttons", label: "Outline border",       icon: "🔘", type: "color", value: "#e3e0d9" },
+  "btn.paddingX":       { group: "Buttons", label: "Padding X (px)",       icon: "🔘", type: "number", value: 24 },
+  "btn.paddingY":       { group: "Buttons", label: "Padding Y (px)",       icon: "🔘", type: "number", value: 12 },
+  "btn.fontSize":       { group: "Buttons", label: "Font size (px)",       icon: "🔘", type: "number", value: 14 },
+
+  // ---------- FOOTER ----------
+  "footer.brand":     { group: "Footer", label: "Brand name",       icon: "🦶", type: "text",     value: "Story Platform" },
+  "footer.desc":      { group: "Footer", label: "Description",      icon: "🦶", type: "textarea", value: "A quiet home for stories worth slowing down for. Fiction, essays, and small epics — curated by hand." },
+  "footer.col1Title": { group: "Footer", label: "Column 1 title",   icon: "🦶", type: "text",     value: "Explore" },
+  "footer.col2Title": { group: "Footer", label: "Column 2 title",   icon: "🦶", type: "text",     value: "Company" },
+  "footer.col3Title": { group: "Footer", label: "Column 3 title",   icon: "🦶", type: "text",     value: "Follow" },
+  "footer.copyright": { group: "Footer", label: "Copyright text",   icon: "🦶", type: "text",     value: "© 2026 Story Platform. All rights reserved." },
+
+  // ---------- MOBILE NAV ----------
+  "mobileNav.items":  { group: "Mobile Nav", label: "Nav items (comma-separated)", icon: "📱", type: "text", value: "Home,Stories,Search,Library,Profile" },
+  "mobileNav.activeColor": { group: "Mobile Nav", label: "Active color", icon: "📱", type: "color", value: "#b45309" },
+
+  // ---------- READER ----------
+  "reader.fontSize":   { group: "Reader", label: "Body font size (px)",  icon: "📜", type: "number", value: 19 },
+  "reader.lineHeight": { group: "Reader", label: "Line height",          icon: "📜", type: "number", value: 1.85, step: 0.05 },
+  "reader.maxWidth":   { group: "Reader", label: "Max width (px)",       icon: "📜", type: "number", value: 720 },
+  "reader.textColor":  { group: "Reader", label: "Text color",           icon: "📜", type: "color",  value: "#232320" },
+  "reader.accent":     { group: "Reader", label: "Chapter heading color", icon: "📜", type: "color", value: "#b45309" },
+
+  // ---------- EMPTY STATE ----------
+  "empty.icon":  { group: "Empty State", label: "Icon (emoji)", icon: "🫙", type: "text",     value: "🔖" },
+  "empty.title": { group: "Empty State", label: "Title",        icon: "🫙", type: "text",     value: "No saved stories yet." },
+  "empty.desc":  { group: "Empty State", label: "Description",  icon: "🫙", type: "textarea", value: "Start exploring and save stories you love." },
+  "empty.cta":   { group: "Empty State", label: "CTA text",     icon: "🫙", type: "text",     value: "Explore stories" },
+
+  // ---------- 404 ----------
+  "nf.code":  { group: "404 Page", label: "Code text",  icon: "🚫", type: "text",     value: "404" },
+  "nf.title": { group: "404 Page", label: "Title",      icon: "🚫", type: "text",     value: "Lost between the pages?" },
+  "nf.desc":  { group: "404 Page", label: "Description",icon: "🚫", type: "textarea", value: "The story you're looking for doesn't seem to exist." },
+  "nf.cta":   { group: "404 Page", label: "CTA text",   icon: "🚫", type: "text",     value: "Back to Home" },
+
+  // ---------- DASHBOARD ----------
+  "dash.stat1": { group: "Dashboard", label: "Stat 1 label", icon: "📊", type: "text", value: "Stories" },
+  "dash.stat1v":{ group: "Dashboard", label: "Stat 1 value", icon: "📊", type: "text", value: "12" },
+  "dash.stat2": { group: "Dashboard", label: "Stat 2 label", icon: "📊", type: "text", value: "Views" },
+  "dash.stat2v":{ group: "Dashboard", label: "Stat 2 value", icon: "📊", type: "text", value: "48.2k" },
+  "dash.stat3": { group: "Dashboard", label: "Stat 3 label", icon: "📊", type: "text", value: "Followers" },
+  "dash.stat3v":{ group: "Dashboard", label: "Stat 3 value", icon: "📊", type: "text", value: "3,410" },
+  "dash.stat4": { group: "Dashboard", label: "Stat 4 label", icon: "📊", type: "text", value: "Drafts" },
+  "dash.stat4v":{ group: "Dashboard", label: "Stat 4 value", icon: "📊", type: "text", value: "3" }
+};
+
+// Which config keys affect which route (for preview navigation)
+const ROUTE_FOR_GROUP = {
+  "Theme": "/", "Navbar": "/", "Hero": "/", "Story Card": "/", "Author Card": "/",
+  "Category Card": "/", "Buttons": "/", "Footer": "/", "Mobile Nav": "/",
+  "Reader": "/story/the-cartographers-daughter",
+  "Empty State": "/library", "404 Page": "/404", "Dashboard": "/dashboard"
+};
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let config = loadConfig();
+let activeKey = null;
+let filterText = "";
+let currentDevice = "desktop";
+
+function loadConfig() {
+  try {
+    const saved = localStorage.getItem("admin.config");
+    if (saved) return { ...DEFAULT_CONFIG, ...JSON.parse(saved) };
+  } catch {}
+  return JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+}
+
+function saveConfig() {
+  localStorage.setItem("admin.config", JSON.stringify(config));
+  localStorage.setItem("admin.savedAt", new Date().toISOString());
+}
+
+function resetAll() {
+  if (!confirm("Reset all edits to defaults? This cannot be undone.")) return;
+  config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+  localStorage.removeItem("admin.config");
+  activeKey = null;
+  renderTree();
+  renderEditor();
+  updatePreview();
+  showToast("Reset to defaults", "success");
+  updateChangesBadge();
+}
+
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(config, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "story-platform-config.json";
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast("Config exported", "success");
+}
+
+function importJSON() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "application/json";
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const imported = JSON.parse(reader.result);
+        config = { ...DEFAULT_CONFIG, ...imported };
+        saveConfig();
+        renderTree();
+        renderEditor();
+        updatePreview();
+        showToast("Config imported", "success");
+      } catch {
+        showToast("Invalid JSON file", "danger");
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function saveAll() {
+  saveConfig();
+  showToast("Changes saved", "success");
+  updateChangesBadge();
+}
+
+function updateChangesBadge() {
+  const saved = localStorage.getItem("admin.config");
+  const hasChanges = saved !== JSON.stringify(config);
+  document.getElementById("changesBadge").style.display = hasChanges ? "inline-flex" : "none";
+}
+
+/* ============================================================
+   TREE (sidebar)
+   ============================================================ */
+function renderTree() {
+  const groups = {};
+  Object.entries(config).forEach(([key, item]) => {
+    if (!groups[item.group]) groups[item.group] = [];
+    groups[item.group].push({ key, ...item });
+  });
+
+  const filter = filterText.trim().toLowerCase();
+  const tree = document.getElementById("tree");
+  let html = "";
+  let total = 0;
+  const groupOrder = ["Theme","Navbar","Hero","Buttons","Story Card","Author Card","Category Card","Reader","Empty State","404 Page","Dashboard","Footer","Mobile Nav"];
+
+  const sortedGroups = Object.keys(groups).sort((a, b) => {
+    const ia = groupOrder.indexOf(a);
+    const ib = groupOrder.indexOf(b);
+    if (ia === -1 && ib === -1) return a.localeCompare(b);
+    if (ia === -1) return 1;
+    if (ib === -1) return -1;
+    return ia - ib;
+  });
+
+  sortedGroups.forEach((g) => {
+    const items = groups[g].filter((it) =>
+      !filter || it.label.toLowerCase().includes(filter) || g.toLowerCase().includes(filter) || it.key.toLowerCase().includes(filter)
+    );
+    if (items.length === 0) return;
+    total += items.length;
+
+    html += `<div class="tree-group" data-group="${g}">`;
+    html += `<div class="tree-group-header" onclick="toggleGroup(this)">
+      <span class="arrow">▼</span>
+      <span>${g}</span>
+      <span class="count" style="margin-left:auto;">${items.length}</span>
+    </div>`;
+    html += `<div class="tree-items">`;
+    items.forEach((it) => {
+      const isActive = it.key === activeKey;
+      html += `<div class="tree-item ${isActive ? "active" : ""}" data-key="${it.key}" onclick="selectKey('${it.key}')">
+        <span class="icon">${it.icon || "•"}</span>
+        <span class="label">${escapeHtml(it.label)}</span>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+
+  tree.innerHTML = html;
+  document.getElementById("itemCount").textContent = `${total} items`;
+}
+
+function toggleGroup(el) {
+  el.parentElement.classList.toggle("collapsed");
+}
+
+function selectKey(key) {
+  activeKey = key;
+  renderTree();
+  renderEditor();
+  updatePreview();
+}
+
+/* ============================================================
+   EDITOR
+   ============================================================ */
+function renderEditor() {
+  const pane = document.getElementById("editorPane");
+  if (!activeKey || !config[activeKey]) {
+    pane.innerHTML = `
+      <div class="empty-panel">
+        <div class="icon">←</div>
+        <h3>Select a component</h3>
+        <p>Choose any component from the left sidebar to edit its text, colors, sizes, and behavior. Changes update the live preview instantly.</p>
+      </div>`;
+    return;
+  }
+
+  const item = config[activeKey];
+  const groupItems = Object.entries(config).filter(([, v]) => v.group === item.group);
+
+  let fieldsHtml = "";
+  groupItems.forEach(([key, it]) => {
+    fieldsHtml += renderField(key, it);
+  });
+
+  pane.innerHTML = `
+    <div class="pane-head">
+      <div>
+        <h1>${item.icon || "•"} ${escapeHtml(item.group)}</h1>
+        <div class="subtitle">Editing: <span style="color:#f59e0b;font-family:'JetBrains Mono',monospace;">${escapeHtml(activeKey)}</span></div>
+      </div>
+      <div class="pane-head-actions">
+        <button class="tb-btn" onclick="resetKey('${activeKey}')">↺ Reset field</button>
+      </div>
+    </div>
+    <div class="form-section">
+      <div class="form-section-title">${escapeHtml(item.group)} settings</div>
+      ${fieldsHtml}
+    </div>
+    <div class="form-section">
+      <div class="form-section-title">Actions</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="tb-btn" onclick="copyKey('${activeKey}')">📋 Copy key</button>
+        <button class="tb-btn" onclick="copyValue('${activeKey}')">📋 Copy value</button>
+        <button class="tb-btn" onclick="jumpToPreview('${item.group}')">👁 Preview this</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderField(key, item) {
+  const val = item.value;
+  let input = "";
+
+  if (item.type === "color") {
+    input = `
+      <div class="color-row">
+        <input type="color" value="${val}" oninput="updateValue('${key}', this.value)" />
+        <input type="text" class="color-value" value="${val}" oninput="updateValue('${key}', this.value)" />
+      </div>`;
+  } else if (item.type === "textarea") {
+    input = `<textarea oninput="updateValue('${key}', this.value)">${escapeHtml(val)}</textarea>`;
+  } else if (item.type === "number") {
+    input = `<input type="number" value="${val}" step="${item.step || 1}" oninput="updateValue('${key}', parseFloat(this.value) || 0)" />`;
+  } else if (item.type === "select") {
+    input = `<select onchange="updateValue('${key}', this.value)">
+      ${item.options.map((o) => `<option value="${o}" ${o === val ? "selected" : ""}>${o}</option>`).join("")}
+    </select>`;
+  } else {
+    input = `<input type="text" value="${escapeHtml(val)}" oninput="updateValue('${key}', this.value)" />`;
+  }
+
+  return `
+    <div class="field">
+      <label>${escapeHtml(item.label)} <span class="hint">${key}</span></label>
+      ${input}
+    </div>
+  `;
+}
+
+function updateValue(key, value) {
+  config[key].value = value;
+  updateChangesBadge();
+  updatePreview();
+  // Re-render editor only if the same key's color text field needs sync (skip to avoid losing focus)
+  // But we do need to update the color input's text sibling if it's a color field
+}
+
+function resetKey(key) {
+  config[key].value = DEFAULT_CONFIG[key].value;
+  renderEditor();
+  updatePreview();
+  showToast(`Reset ${key}`, "success");
+  updateChangesBadge();
+}
+
+function copyKey(key) {
+  navigator.clipboard.writeText(key);
+  showToast(`Copied key: ${key}`, "success");
+}
+function copyValue(key) {
+  navigator.clipboard.writeText(String(config[key].value));
+  showToast("Value copied", "success");
+}
+function jumpToPreview(group) {
+  const route = ROUTE_FOR_GROUP[group] || "/";
+  const frame = document.getElementById("previewFrame");
+  frame.contentWindow.postMessage({ type: "navigate", route }, "*");
+  document.getElementById("previewRoute").textContent = route;
+}
+
+/* ============================================================
+   PREVIEW (iframe with the actual story platform)
+   ============================================================ */
+function buildPreviewHTML() {
+  const c = {};
+  Object.entries(config).forEach(([k, v]) => { c[k] = v.value; });
+
+  const theme = {
+    bg: c["theme.bg"],
+    surface: c["theme.surface"],
+    surface2: c["theme.surface2"],
+    text: c["theme.text"],
+    textMuted: c["theme.textMuted"],
+    border: c["theme.border"],
+    accent: c["theme.accent"],
+    radius: c["theme.radius"] + "px"
+  };
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: ${theme.bg};
+    --surface: ${theme.surface};
+    --surface-2: ${theme.surface2};
+    --text: ${theme.text};
+    --text-muted: ${theme.textMuted};
+    --border: ${theme.border};
+    --accent: ${theme.accent};
+    --radius: ${theme.radius};
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
+  h1, h2, h3, h4 { font-family: 'Fraunces', Georgia, serif; letter-spacing: -0.01em; font-weight: 600; line-height: 1.15; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  img { display: block; max-width: 100%; }
+  input, textarea { font-family: inherit; }
+  .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+  /* NAVBAR */
+  .navbar { position: sticky; top: 0; z-index: 40; border-bottom: 1px solid var(--border); background: color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter: blur(12px); }
+  .navbar-inner { display: flex; align-items: center; justify-content: space-between; height: ${c["nav.height"]}px; max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+  .logo { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; }
+  .logo span { color: var(--accent); font-weight: 400; }
+  .nav-links { display: none; gap: 32px; align-items: center; }
+  @media (min-width: 768px) { .nav-links { display: flex; } }
+  .nav-links a { font-size: 14px; color: var(--text-muted); font-weight: 500; }
+  .nav-actions { display: flex; align-items: center; gap: 6px; }
+  .icon-btn { width: 40px; height: 40px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; }
+  .icon-btn:hover { background: var(--surface-2); }
+  .btn-dashboard { display: none; padding: 8px 18px; border-radius: 999px; background: ${c["nav.ctaBg"]}; color: ${c["nav.ctaTextColor"]}; font-size: 13px; font-weight: 500; }
+  @media (min-width: 768px) { .btn-dashboard { display: inline-flex; } }
+
+  /* BUTTONS */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: ${c["btn.paddingY"]}px ${c["btn.paddingX"]}px; border-radius: ${c["btn.primary.radius"]}px; font-size: ${c["btn.fontSize"]}px; font-weight: 500; transition: filter 0.2s; }
+  .btn-primary { background: ${c["btn.primary.bg"]}; color: ${c["btn.primary.text"]}; }
+  .btn-primary:hover { filter: brightness(1.1); }
+  .btn-secondary { background: ${c["btn.secondary.bg"]}; color: ${c["btn.secondary.text"]}; }
+  .btn-outline { border: 1px solid ${c["btn.outline.border"]}; color: var(--text); }
+  .btn-lg { padding: 14px 28px; font-size: 15px; }
+  .btn-sm { padding: 8px 16px; font-size: 13px; }
+
+  /* HERO */
+  .hero { border-bottom: 1px solid var(--border); }
+  .hero-grid { display: grid; gap: 48px; padding: 72px 24px; max-width: 1280px; margin: 0 auto; }
+  @media (min-width: 768px) { .hero-grid { grid-template-columns: 1fr 1fr; padding: 112px 24px; align-items: center; } }
+  .hero-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--accent); font-weight: 600; }
+  .hero h1 { font-size: clamp(36px, 6vw, 64px); margin-top: 16px; line-height: 1.05; letter-spacing: -0.03em; white-space: pre-line; }
+  .hero .lead { margin-top: 24px; max-width: 440px; color: var(--text-muted); font-size: 17px; line-height: 1.6; }
+  .hero-actions { margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .hero-visual { position: relative; }
+  .hero-visual img { width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+  .hero-badge { position: absolute; bottom: -20px; left: -20px; max-width: 280px; padding: 16px 20px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: 0 20px 40px rgba(0,0,0,0.08); display: none; }
+  @media (min-width: 768px) { .hero-badge { display: block; } }
+  .hero-badge .eyebrow { font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent); font-weight: 600; }
+  .hero-badge .title { margin-top: 4px; font-family: 'Fraunces', serif; font-weight: 600; font-size: 15px; }
+  .hero-badge .author { margin-top: 4px; font-size: 12px; color: var(--text-muted); }
+
+  /* SECTIONS */
+  .section { padding: 80px 0; }
+  .section-surface { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .section-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; gap: 16px; flex-wrap: wrap; }
+  .section-head h2 { font-size: clamp(24px, 3vw, 32px); }
+  .section-head p { margin-top: 8px; color: var(--text-muted); font-size: 14px; }
+  .section-link { font-size: 14px; color: var(--accent); font-weight: 500; }
+
+  /* STORY CARD */
+  .story-grid { display: grid; gap: 32px; grid-template-columns: 1fr; }
+  @media (min-width: 640px) { .story-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .story-grid { grid-template-columns: repeat(4, 1fr); } }
+  .story-grid-3 { grid-template-columns: 1fr; }
+  @media (min-width: 768px) { .story-grid-3 { grid-template-columns: repeat(3, 1fr); } }
+  .story-card { position: relative; cursor: pointer; }
+  .story-card .cover-wrap { position: relative; aspect-ratio: 3/4; overflow: hidden; border-radius: ${c["storyCard.radius"]}px; background: var(--surface-2); }
+  .story-card .cover-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 700ms cubic-bezier(.2,.6,.2,1); }
+  .story-card:hover .cover-wrap img { transform: scale(${c["storyCard.hoverScale"]}); }
+  .story-card .cover-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.2) 40%, transparent 70%); }
+  .story-card .cover-meta { position: absolute; bottom: 16px; left: 16px; right: 16px; color: #fff; }
+  .story-card .cover-meta .rt { font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.85; }
+  .story-card .cover-meta h3 { font-size: 18px; margin-top: 6px; font-weight: 600; line-height: 1.25; font-family: 'Fraunces', serif; }
+  .story-card .bookmark-btn { position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 999px; background: rgba(0,0,0,0.4); color: #fff; backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; font-size: 16px; opacity: 0; transition: opacity 0.2s; }
+  .story-card:hover .bookmark-btn, .story-card .bookmark-btn.saved { opacity: 1; }
+  .story-card .bookmark-btn.saved { color: ${c["storyCard.bookmarkColor"]}; }
+
+  /* AUTHOR CARD */
+  .author-grid { display: grid; gap: 24px; grid-template-columns: 1fr; }
+  @media (min-width: 640px) { .author-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .author-grid { grid-template-columns: repeat(4, 1fr); } }
+  .author-card { text-align: center; padding: 28px 20px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); }
+  .author-card img { width: 80px; height: 80px; border-radius: ${c["authorCard.radius"]}px; object-fit: cover; margin: 0 auto; border: 3px solid var(--surface-2); }
+  .author-card h3 { font-size: 16px; margin-top: 16px; font-family: 'Fraunces', serif; }
+  .author-card p { font-size: 13px; color: var(--text-muted); margin-top: 6px; line-height: 1.5; min-height: 38px; }
+  .author-card .follow-btn { margin-top: 16px; padding: 8px 20px; border-radius: 999px; font-size: 13px; font-weight: 500; border: 1px solid var(--border); color: var(--text); }
+  .author-card .follow-btn.following { background: ${c["authorCard.followBg"]}; border-color: ${c["authorCard.followBg"]}; color: ${c["authorCard.followText"]}; }
+
+  /* CATEGORY CARD */
+  .category-row { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 8px; }
+  .category-card { flex: 0 0 auto; min-width: 200px; border-radius: ${c["categoryCard.radius"]}px; overflow: hidden; background: var(--bg); border: 1px solid var(--border); }
+  .category-card img { width: 100%; height: ${c["categoryCard.height"]}px; object-fit: cover; }
+  .category-card .body { padding: 16px; }
+  .category-card h3 { font-size: 16px; font-family: 'Fraunces', serif; }
+  .category-card p { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .category-card .count { font-size: 11px; color: var(--accent); margin-top: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  /* FOOTER */
+  .footer { margin-top: 96px; border-top: 1px solid var(--border); background: var(--surface); }
+  .footer-grid { max-width: 1280px; margin: 0 auto; display: grid; gap: 40px; padding: 56px 24px; grid-template-columns: 1fr; }
+  @media (min-width: 768px) { .footer-grid { grid-template-columns: 1.4fr 1fr 1fr 1fr; } }
+  .footer h4 { font-size: 18px; font-family: 'Fraunces', serif; }
+  .footer .desc { margin-top: 12px; font-size: 14px; color: var(--text-muted); max-width: 300px; line-height: 1.6; }
+  .footer h5 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-muted); font-weight: 600; font-family: 'Inter', sans-serif; }
+  .footer ul { list-style: none; margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .footer ul a { font-size: 14px; color: var(--text); }
+  .social { display: flex; gap: 12px; margin-top: 16px; }
+  .social a { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; background: var(--bg); border: 1px solid var(--border); }
+  .footer-bottom { border-top: 1px solid var(--border); padding: 24px; text-align: center; font-size: 12px; color: var(--text-muted); }
+
+  /* MOBILE NAV */
+  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 40; border-top: 1px solid var(--border); background: color-mix(in srgb, var(--bg) 95%, transparent); backdrop-filter: blur(12px); display: grid; grid-template-columns: repeat(${c["mobileNav.items"].split(",").length}, 1fr); }
+  @media (min-width: 768px) { .bottom-nav { display: none; } }
+  .bottom-nav a { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 4px; font-size: 11px; font-weight: 500; color: var(--text-muted); }
+  .bottom-nav a .bi { font-size: 20px; line-height: 1; }
+  .bottom-nav a.active { color: ${c["mobileNav.activeColor"]}; }
+
+  /* READER */
+  .reader-progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 30; }
+  .reader-progress-bar { height: 100%; background: var(--accent); width: 40%; }
+  .story-header { max-width: 760px; margin: 0 auto; padding: 64px 24px 0; }
+  .story-header .back { font-size: 13px; color: var(--text-muted); }
+  .story-header h1 { font-size: clamp(32px, 5vw, 52px); margin-top: 24px; line-height: 1.1; }
+  .story-header .excerpt { margin-top: 16px; font-size: 18px; color: var(--text-muted); line-height: 1.6; }
+  .reader-content { max-width: ${c["reader.maxWidth"]}px; margin: 0 auto; padding: 48px 24px 96px; font-family: 'Fraunces', serif; font-size: ${c["reader.fontSize"]}px; line-height: ${c["reader.lineHeight"]}; color: ${c["reader.textColor"]}; }
+  .reader-content h2 { font-size: 1.35em; margin-top: 48px; margin-bottom: 8px; color: ${c["reader.accent"]}; font-weight: 600; }
+  .reader-content h2:first-child { margin-top: 0; }
+  .reader-content p { margin-top: 16px; }
+
+  /* EMPTY */
+  .empty { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 72px 24px; }
+  .empty .icon { font-size: 48px; margin-bottom: 16px; opacity: 0.8; }
+  .empty h3 { font-size: 22px; }
+  .empty p { margin-top: 8px; color: var(--text-muted); font-size: 14px; max-width: 380px; line-height: 1.6; }
+  .empty .action { margin-top: 24px; }
+
+  /* DASHBOARD */
+  .page-head { padding: 56px 0 24px; }
+  .page-head h1 { font-size: clamp(32px, 5vw, 48px); }
+  .dash-stats { display: grid; gap: 20px; grid-template-columns: repeat(2, 1fr); }
+  @media (min-width: 768px) { .dash-stats { grid-template-columns: repeat(4, 1fr); } }
+  .stat-card { padding: 24px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+  .stat-card .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); font-weight: 600; }
+  .stat-card .value { font-size: 32px; font-weight: 700; margin-top: 8px; font-family: 'Fraunces', serif; }
+
+  /* 404 */
+  .nf { max-width: 560px; margin: 0 auto; padding: 96px 24px; text-align: center; }
+  .nf .code { font-size: 12px; text-transform: uppercase; letter-spacing: 0.3em; color: var(--accent); font-weight: 600; }
+  .nf h1 { margin-top: 16px; font-size: clamp(32px, 5vw, 48px); }
+  .nf p { margin-top: 16px; color: var(--text-muted); font-size: 16px; }
+  .nf .btn { margin-top: 32px; }
+
+  body { padding-bottom: 80px; }
+  @media (min-width: 768px) { body { padding-bottom: 0; } }
+</style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="#" class="logo">${escapeHtml(c["nav.logoText"])}<span>${escapeHtml(c["nav.logoAccent"])}</span></a>
+      <nav class="nav-links">
+        <a href="#">${escapeHtml(c["nav.link1"])}</a>
+        <a href="#">${escapeHtml(c["nav.link2"])}</a>
+        <a href="#">${escapeHtml(c["nav.link3"])}</a>
+        <a href="#">${escapeHtml(c["nav.link4"])}</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn">🔍</button>
+        <button class="icon-btn">🌙</button>
+        <a href="#" class="btn-dashboard">${escapeHtml(c["nav.ctaText"])}</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="previewMain"></main>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <h4>${escapeHtml(c["footer.brand"])}</h4>
+        <p class="desc">${escapeHtml(c["footer.desc"])}</p>
+      </div>
+      <div>
+        <h5>${escapeHtml(c["footer.col1Title"])}</h5>
+        <ul><li><a href="#">Stories</a></li><li><a href="#">Categories</a></li><li><a href="#">Authors</a></li></ul>
+      </div>
+      <div>
+        <h5>${escapeHtml(c["footer.col2Title"])}</h5>
+        <ul><li><a href="#">About</a></li><li><a href="#">Contact</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms</a></li></ul>
+      </div>
+      <div>
+        <h5>${escapeHtml(c["footer.col3Title"])}</h5>
+        <div class="social"><a href="#">𝕏</a><a href="#">◎</a><a href="#">◉</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom">${escapeHtml(c["footer.copyright"])}</div>
+  </footer>
+
+  <nav class="bottom-nav">
+    ${c["mobileNav.items"].split(",").map((item, i) => {
+      const icons = ["🏠","📖","🔍","🔖","👤"];
+      const active = i === 0 ? "active" : "";
+      return `<a href="#" class="${active}"><span class="bi">${icons[i] || "•"}</span>${escapeHtml(item.trim())}</a>`;
+    }).join("")}
+  </nav>
+
+<script>
+  // Mock data
+  const STORIES = [
+    { slug: "the-cartographers-daughter", title: "The Cartographer's Daughter", excerpt: "A mapmaker's daughter inherits an atlas of places that don't exist — and a warning never to visit them.", cover: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=1200&q=80", readingTime: 18 },
+    { slug: "signal-from-titan", title: "Signal from Titan", excerpt: "A lone technician on Saturn's moon receives a message in a language no one has spoken for a century.", cover: "https://images.unsplash.com/photo-1614728263952-84ea256f9679?w=1200&q=80", readingTime: 14 },
+    { slug: "the-salt-queen", title: "The Salt Queen", excerpt: "In a kingdom where memory is currency, a queen must decide what to forget.", cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&q=80", readingTime: 24 },
+    { slug: "the-quiet-house", title: "The Quiet House", excerpt: "A family moves into a house where no sound has ever been heard.", cover: "https://images.unsplash.com/photo-1505635552518-3448ff116af3?w=1200&q=80", readingTime: 12 },
+    { slug: "train-to-coimbatore", title: "Train to Coimbatore", excerpt: "Two strangers share a compartment, a tiffin, and the truth.", cover: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1200&q=80", readingTime: 16 },
+    { slug: "the-last-record-store", title: "The Last Record Store", excerpt: "On the day vinyl dies, a shopkeeper plays one final song.", cover: "https://images.unsplash.com/photo-1526397751294-331021109fbd?w=1200&q=80", readingTime: 10 },
+    { slug: "the-orange-tree", title: "The Orange Tree", excerpt: "Every year, the tree in the courtyard blooms out of season.", cover: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=1200&q=80", readingTime: 20 },
+    { slug: "the-wolf-who-learned-to-knit", title: "The Wolf Who Learned to Knit", excerpt: "A fairy tale about a wolf, a grandmother, and a very warm scarf.", cover: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=1200&q=80", readingTime: 9 }
+  ];
+
+  const CATEGORIES = [
+    { name: "Literary Fiction", description: "Quiet, character-driven stories.", cover: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&q=80" },
+    { name: "Science Fiction", description: "Futures near and far.", cover: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&q=80" },
+    { name: "Fantasy", description: "Myth, magic, and maps.", cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&q=80" },
+    { name: "Mystery", description: "Clues, questions, quiet dread.", cover: "https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=400&q=80" },
+    { name: "Romance", description: "Slow burns and second chances.", cover: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=400&q=80" },
+    { name: "Horror", description: "The things we don't say.", cover: "https://images.unsplash.com/photo-1505635552518-3448ff116af3?w=400&q=80" }
+  ];
+
+  const AUTHORS = [
+    { id: "a1", name: "Elena Marchetti", avatar: "https://i.pravatar.cc/150?img=47", bio: "Writes quiet stories about loud cities.", followers: 12400 },
+    { id: "a2", name: "Kai Nakamura", avatar: "https://i.pravatar.cc/150?img=12", bio: "Speculative fiction, coffee-fuelled.", followers: 8320 },
+    { id: "a3", name: "Amara Okafor", avatar: "https://i.pravatar.cc/150?img=32", bio: "Myths retold for modern ears.", followers: 21100 },
+    { id: "a4", name: "Theo Lindqvist", avatar: "https://i.pravatar.cc/150?img=15", bio: "Nordic noir with a soft heart.", followers: 5600 }
+  ];
+
+  function storyCard(s) {
+    return \`<article class="story-card">
+      <div class="cover-wrap">
+        <img src="\${s.cover}" alt="\${s.title}" />
+        <div class="cover-overlay"></div>
+        <button class="bookmark-btn">☆</button>
+        <div class="cover-meta">
+          \${${JSON.stringify(c["storyCard.showTime"])} === "yes" ? \`<div class="rt">\${s.readingTime} min read</div>\` : ""}
+          <h3>\${s.title}</h3>
+        </div>
+      </div>
+    </article>\`;
+  }
+
+  function authorCard(a) {
+    return \`<div class="author-card">
+      <img src="\${a.avatar}" alt="\${a.name}" />
+      <h3>\${a.name}</h3>
+      <p>\${a.bio}</p>
+      <button class="follow-btn">${escapeHtml(c["authorCard.label"])}</button>
+    </div>\`;
+  }
+
+  function categoryCard(cat) {
+    return \`<div class="category-card">
+      <img src="\${cat.cover}" alt="\${cat.name}" />
+      <div class="body">
+        <h3>\${cat.name}</h3>
+        <p>\${cat.description}</p>
+        <div class="count">4 stories</div>
+      </div>
+    </div>\`;
+  }
+
+  function renderHome() {
+    return \`
+      <section class="hero">
+        <div class="hero-grid">
+          <div>
+            <div class="hero-eyebrow">${escapeHtml(c["hero.eyebrow"])}</div>
+            <h1>${escapeHtml(c["hero.title"])}</h1>
+            <p class="lead">${escapeHtml(c["hero.lead"])}</p>
+            <div class="hero-actions">
+              <a href="#" class="btn btn-primary btn-lg" style="background:${c["hero.cta1Bg"]};color:${c["hero.cta1Text"]}">${escapeHtml(c["hero.cta1"])}</a>
+              <a href="#" class="btn btn-outline btn-lg">${escapeHtml(c["hero.cta2"])}</a>
+            </div>
+          </div>
+          <div class="hero-visual">
+            <img src="\${STORIES[0].cover}" alt="" />
+            <div class="hero-badge">
+              <div class="eyebrow">Editor's pick</div>
+              <div class="title">${escapeHtml(c["hero.badgeTitle"])}</div>
+              <div class="author">${escapeHtml(c["hero.badgeAuthor"])}</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-head">
+            <div><h2>Featured this week</h2><p>Hand-picked by our editors.</p></div>
+            <a href="#" class="section-link">View all →</a>
+          </div>
+          <div class="story-grid story-grid-3">\${STORIES.slice(0,3).map(storyCard).join("")}</div>
+        </div>
+      </section>
+
+      <section class="section section-surface">
+        <div class="container">
+          <div class="section-head">
+            <div><h2>Browse by mood</h2><p>Find the right story for right now.</p></div>
+            <a href="#" class="section-link">All categories →</a>
+          </div>
+          <div class="category-row">\${CATEGORIES.map(categoryCard).join("")}</div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-head"><h2>Latest stories</h2></div>
+          <div class="story-grid">\${STORIES.map(storyCard).join("")}</div>
+        </div>
+      </section>
+
+      <section class="section section-surface">
+        <div class="container">
+          <div class="section-head"><h2>Writers to follow</h2><a href="#" class="section-link">All authors →</a></div>
+          <div class="author-grid">\${AUTHORS.map(authorCard).join("")}</div>
+        </div>
+      </section>
+    \`;
+  }
+
+  function renderStory() {
+    return \`
+      <div class="reader-progress"><div class="reader-progress-bar"></div></div>
+      <div class="story-header">
+        <div class="back">← Back to stories</div>
+        <div style="margin-top:24px;font-size:11px;text-transform:uppercase;letter-spacing:0.15em;color:var(--accent);font-weight:600;">Literary Fiction</div>
+        <h1>The Cartographer's Daughter</h1>
+        <p class="excerpt">A mapmaker's daughter inherits an atlas of places that don't exist — and a warning never to visit them.</p>
+      </div>
+      <div class="reader-content">
+        <h2>Chapter 1 — The Atlas</h2>
+        <p>The rain had not stopped for three days. Mira watched it from the window of the bookshop, tracing the same crack in the glass she had traced a thousand times before.</p>
+        <p>Somewhere below, a bell rang — not the shop bell, another one, older, from a church that no longer existed.</p>
+        <p>She turned the page. The letter was still there, folded into quarters, the ink slightly blurred. <em>Come find me</em>, it said. <em>Before the winter ends.</em></p>
+        <h2>Chapter 2 — The First Door</h2>
+        <p>She had read it so many times the words had stopped meaning anything. And yet — every morning, she came back to it.</p>
+        <p>Outside, the street lamps flickered on. The city was beginning to settle into its evening self, the one that belonged to no one in particular.</p>
+      </div>
+    \`;
+  }
+
+  function renderEmpty() {
+    return \`
+      <div class="container">
+        <div class="page-head"><h1>Your Library</h1><p style="margin-top:12px;color:var(--text-muted);font-size:16px;">Stories you've saved for later.</p></div>
+        <div class="empty">
+          <div class="icon">${escapeHtml(c["empty.icon"])}</div>
+          <h3>${escapeHtml(c["empty.title"])}</h3>
+          <p>${escapeHtml(c["empty.desc"])}</p>
+          <div class="action"><a href="#" class="btn btn-primary">${escapeHtml(c["empty.cta"])}</a></div>
+        </div>
+      </div>
+    \`;
+  }
+
+  function renderDashboard() {
+    return \`
+      <div class="container">
+        <div class="page-head"><h1>Dashboard</h1><p style="margin-top:12px;color:var(--text-muted);font-size:16px;">An overview of your writing.</p></div>
+        <div class="dash-stats">
+          <div class="stat-card"><div class="label">${escapeHtml(c["dash.stat1"])}</div><div class="value">${escapeHtml(c["dash.stat1v"])}</div></div>
+          <div class="stat-card"><div class="label">${escapeHtml(c["dash.stat2"])}</div><div class="value">${escapeHtml(c["dash.stat2v"])}</div></div>
+          <div class="stat-card"><div class="label">${escapeHtml(c["dash.stat3"])}</div><div class="value">${escapeHtml(c["dash.stat3v"])}</div></div>
+          <div class="stat-card"><div class="label">${escapeHtml(c["dash.stat4"])}</div><div class="value">${escapeHtml(c["dash.stat4v"])}</div></div>
+        </div>
+      </div>
+    \`;
+  }
+
+  function render404() {
+    return \`
+      <div class="nf">
+        <div class="code">${escapeHtml(c["nf.code"])}</div>
+        <h1>${escapeHtml(c["nf.title"])}</h1>
+        <p>${escapeHtml(c["nf.desc"])}</p>
+        <a href="#" class="btn btn-primary btn-lg">${escapeHtml(c["nf.cta"])}</a>
+      </div>
+    \`;
+  }
+
+  const routes = {
+    "/": renderHome,
+    "/story/the-cartographers-daughter": renderStory,
+    "/library": renderEmpty,
+    "/dashboard": renderDashboard,
+    "/404": render404
+  };
+
+  function renderRoute(route) {
+    const fn = routes[route] || renderHome;
+    document.getElementById("previewMain").innerHTML = fn();
+  }
+
+  window.addEventListener("message", (e) => {
+    if (e.data && e.data.type === "navigate") {
+      renderRoute(e.data.route);
+    }
+  });
+
+  renderRoute("/");
+<\/script>
+</body>
+</html>`;
+}
+
+let previewHTML = "";
+
+function updatePreview() {
+  const frame = document.getElementById("previewFrame");
+  previewHTML = buildPreviewHTML();
+  frame.srcdoc = previewHTML;
+}
+
+function setDevice(device) {
+  currentDevice = device;
+  document.querySelectorAll(".device-tab").forEach((t) => t.classList.toggle("active", t.dataset.device === device));
+  const frame = document.getElementById("deviceFrame");
+  frame.classList.remove("mobile", "tablet");
+  if (device === "mobile") frame.classList.add("mobile");
+  else if (device === "tablet") frame.classList.add("tablet");
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+function showToast(msg, type = "") {
+  const stack = document.getElementById("toastStack");
+  const el = document.createElement("div");
+  el.className = "toast " + type;
+  el.textContent = msg;
+  stack.appendChild(el);
+  setTimeout(() => {
+    el.style.transition = "opacity 0.3s, transform 0.3s";
+    el.style.opacity = "0";
+    el.style.transform = "translateX(20px)";
+    setTimeout(() => el.remove(), 300);
+  }, 2200);
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+document.getElementById("treeFilter").addEventListener("input", (e) => {
+  filterText = e.target.value;
+  renderTree();
+});
+
+renderTree();
+updatePreview();
+updateChangesBadge();
+
+// Keyboard: Ctrl+S to save
+document.addEventListener("keydown", (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+    e.preventDefault();
+    saveAll();
+  }
+});
+
+// Expose functions
+window.selectKey = selectKey;
+window.toggleGroup = toggleGroup;
+window.updateValue = updateValue;
+window.resetKey = resetKey;
+window.resetAll = resetAll;
+window.saveAll = saveAll;
+window.exportJSON = exportJSON;
+window.importJSON = importJSON;
+window.copyKey = copyKey;
+window.copyValue = copyValue;
+window.jumpToPreview = jumpToPreview;
+window.setDevice = setDevice;
+window.showToast = showToast;
+</script>
+</body>
+</html>
