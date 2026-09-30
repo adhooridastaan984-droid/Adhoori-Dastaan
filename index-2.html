@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<html lang="hi" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+<meta name="theme-color" content="#faf6f0" />
+<meta name="description" content="अधूरी दास्तान — एक कहानी जो कभी पूरी नहीं हुई। यादें, भावनाएँ, और वो बातें जो कह नहीं पाए।" />
+<meta property="og:title" content="अधूरी दास्तान | Incomplete Story" />
+<meta property="og:description" content="एक अधूरी कहानी, कुछ यादें, और बहुत सारी बातें जो कह नहीं पाए।" />
+<meta property="og:type" content="website" />
+<title>अधूरी दास्तान | Incomplete Story</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&family=Mukta:wght@200;300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   RESET & DESIGN TOKENS
+   ═══════════════════════════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  /* Colors - Light */
+  --bg: #faf6f0;
+  --bg-alt: #f2ebe0;
+  --bg-deep: #ebe2d4;
+  --text: #231f1a;
+  --text-soft: #6b6258;
+  --text-mute: #9c9285;
+  --accent: #b8763e;
+  --accent-soft: #d4a574;
+  --accent-glow: rgba(184, 118, 62, 0.25);
+  --border: rgba(35, 31, 26, 0.09);
+  --border-strong: rgba(35, 31, 26, 0.15);
+  --card: #ffffff;
+  --overlay: rgba(250, 246, 240, 0.85);
+  --shadow-sm: 0 2px 8px rgba(35, 31, 26, 0.05);
+  --shadow-md: 0 12px 40px rgba(35, 31, 26, 0.09);
+  --shadow-lg: 0 30px 80px rgba(35, 31, 26, 0.15);
+  
+  /* Typography */
+  --font-hindi: 'Tiro Devanagari Hindi', serif;
+  --font-body: 'Mukta', sans-serif;
+  --font-latin: 'Cormorant Garamond', serif;
+  
+  /* Spacing */
+  --container: 1100px;
+  --container-narrow: 720px;
+  
+  /* Motion */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --t-fast: 0.2s;
+  --t: 0.4s;
+  --t-slow: 0.8s;
+}
+
+[data-theme="dark"] {
+  --bg: #100e0b;
+  --bg-alt: #1a1712;
+  --bg-deep: #221e18;
+  --text: #ece6db;
+  --text-soft: #a89e8d;
+  --text-mute: #6e6557;
+  --accent: #d4a574;
+  --accent-soft: #b8763e;
+  --accent-glow: rgba(212, 165, 116, 0.25);
+  --border: rgba(236, 230, 219, 0.08);
+  --border-strong: rgba(236, 230, 219, 0.15);
+  --card: #1a1712;
+  --overlay: rgba(16, 14, 11, 0.85);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 12px 40px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 30px 80px rgba(0, 0, 0, 0.6);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BASE
+   ═══════════════════════════════════════════════════════════════ */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.8;
+  overflow-x: hidden;
+  min-height: 100vh;
+  transition: background var(--t) var(--ease), color var(--t) var(--ease);
+}
+
+body.no-scroll { overflow: hidden; }
+
+img { max-width: 100%; display: block; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+a { color: inherit; text-decoration: none; }
+input, textarea { font-family: inherit; }
+
+::selection { background: var(--accent); color: #fff; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-alt); }
+::-webkit-scrollbar-thumb {
+  background: var(--accent-soft);
+  border-radius: 10px;
+  border: 2px solid var(--bg-alt);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ═══════════════════════════════════════════════════════════════
+   LOADER
+   ═══════════════════════════════════════════════════════════════ */
+#loader {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 10000;
+  display: grid; place-items: center;
+  transition: opacity 0.8s var(--ease), visibility 0.8s;
+}
+#loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.loader-content { text-align: center; }
+.loader-title {
+  font-family: var(--font-hindi);
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  color: var(--text);
+  margin-bottom: 2rem;
+  letter-spacing: 0.02em;
+}
+.loader-title .dot {
+  display: inline-block;
+  animation: dotPulse 1.4s infinite ease-in-out;
+}
+.loader-title .dot:nth-child(2) { animation-delay: 0.2s; }
+.loader-title .dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dotPulse {
+  0%, 80%, 100% { opacity: 0.2; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-4px); }
+}
+
+.loader-bar {
+  width: 220px; height: 2px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 0 auto;
+  overflow: hidden;
+  position: relative;
+}
+.loader-bar::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  animation: loadSlide 1.5s infinite;
+}
+@keyframes loadSlide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GRAIN TEXTURE
+   ═══════════════════════════════════════════════════════════════ */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-theme="dark"] body::before { opacity: 0.06; }
+
+/* ═══════════════════════════════════════════════════════════════
+   READING PROGRESS
+   ═══════════════════════════════════════════════════════════════ */
+.progress-bar {
+  position: fixed; top: 0; left: 0;
+  height: 3px; width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-soft));
+  z-index: 9999;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   NAVBAR
+   ═══════════════════════════════════════════════════════════════ */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  padding: 1.2rem 2.5rem;
+  display: flex; justify-content: space-between; align-items: center;
+  z-index: 1000;
+  transition: all var(--t) var(--ease);
+}
+.nav.scrolled {
+  padding: 0.8rem 2.5rem;
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-logo {
+  font-family: var(--font-hindi);
+  font-size: 1.4rem;
+  color: var(--text);
+  letter-spacing: 0.01em;
+  display: flex; align-items: center; gap: 0.4rem;
+}
+.nav-logo::before {
+  content: '✦';
+  color: var(--accent);
+  font-size: 0.9rem;
+  animation: spinSlow 8s linear infinite;
+}
+@keyframes spinSlow { to { transform: rotate(360deg); } }
+
+.nav-logo .accent { color: var(--accent); font-style: italic; }
+
+.nav-links {
+  display: flex; align-items: center; gap: 0.3rem;
+  list-style: none;
+}
+
+.nav-links a {
+  padding: 0.5rem 1rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--text-soft);
+  border-radius: 100px;
+  position: relative;
+  transition: all var(--t) var(--ease);
+}
+.nav-links a:hover {
+  color: var(--text);
+  background: var(--bg-alt);
+}
+.nav-links a.active { color: var(--accent); }
+
+.nav-actions { display: flex; align-items: center; gap: 0.6rem; }
+
+.icon-btn {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  display: grid; place-items: center;
+  font-size: 1.05rem;
+  transition: all var(--t) var(--ease);
+  color: var(--text);
+}
+.icon-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 20px var(--accent-glow);
+}
+
+.menu-btn { display: none; }
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════════════════════════ */
+.hero {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  text-align: center;
+  padding: 7rem 2rem 5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.5;
+  animation: floatOrb 20s ease-in-out infinite;
+}
+.orb-1 {
+  width: 400px; height: 400px;
+  background: var(--accent-soft);
+  top: -10%; left: -5%;
+  animation-delay: 0s;
+}
+.orb-2 {
+  width: 350px; height: 350px;
+  background: var(--accent);
+  bottom: -10%; right: -5%;
+  animation-delay: -7s;
+  opacity: 0.35;
+}
+.orb-3 {
+  width: 300px; height: 300px;
+  background: var(--accent-soft);
+  top: 40%; left: 40%;
+  animation-delay: -14s;
+  opacity: 0.25;
+}
+@keyframes floatOrb {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(40px, -30px) scale(1.1); }
+  66% { transform: translate(-30px, 40px) scale(0.9); }
+}
+
+.stars-container {
+  position: absolute; inset: 0;
+  pointer-events: none;
+}
+.star {
+  position: absolute;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: twinkle 4s infinite ease-in-out;
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.6); }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  width: 100%;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center; gap: 0.6rem;
+  padding: 0.5rem 1.3rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 100px;
+  background: color-mix(in srgb, var(--card) 70%, transparent);
+  backdrop-filter: blur(10px);
+  font-size: 0.82rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  margin-bottom: 2.5rem;
+  font-weight: 500;
+  opacity: 0;
+  animation: fadeInUp 1s 0.2s var(--ease-out) forwards;
+}
+.hero-badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+
+.hero-title {
+  font-family: var(--font-hindi);
+  font-size: clamp(3.5rem, 10vw, 7rem);
+  line-height: 1.05;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeInUp 1.2s 0.4s var(--ease-out) forwards;
+}
+.hero-title .accent {
+  color: var(--accent);
+  font-style: italic;
+  position: relative;
+  display: inline-block;
+}
+.hero-title .accent::after {
+  content: '';
+  position: absolute;
+  bottom: 0.05em; left: 0; right: 0;
+  height: 0.08em;
+  background: currentColor;
+  opacity: 0.25;
+  border-radius: 100px;
+}
+
+.hero-subtitle {
+  font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+  color: var(--text-soft);
+  max-width: 600px;
+  margin: 0 auto 3rem;
+  font-weight: 300;
+  line-height: 1.9;
+  opacity: 0;
+  animation: fadeInUp 1.2s 0.6s var(--ease-out) forwards;
+}
+.hero-subtitle em {
+  font-style: italic;
+  color: var(--accent);
+  font-weight: 400;
+}
+
+.hero-actions {
+  display: flex; gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeInUp 1.2s 0.8s var(--ease-out) forwards;
+}
+
+.btn {
+  display: inline-flex; align-items: center; gap: 0.7rem;
+  padding: 1rem 2.2rem;
+  border-radius: 100px;
+  font-size: 0.98rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: all var(--t) var(--ease);
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+.btn-primary:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px var(--accent-glow);
+}
+.btn-primary .arrow {
+  transition: transform var(--t) var(--ease);
+  display: inline-block;
+}
+.btn-primary:hover .arrow { transform: translateX(4px); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+.btn-ghost:hover {
+  background: var(--bg-alt);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-3px);
+}
+
+.scroll-cue {
+  position: absolute;
+  bottom: 2rem; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column;
+  align-items: center; gap: 0.6rem;
+  color: var(--text-mute);
+  font-size: 0.72rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-weight: 500;
+  opacity: 0;
+  animation: fadeInUp 1s 1.2s var(--ease-out) forwards;
+  z-index: 2;
+}
+.scroll-cue-line {
+  width: 1px; height: 50px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+  position: relative;
+  overflow: hidden;
+}
+.scroll-cue-line::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 30%;
+  background: var(--text);
+  animation: scrollDown 2.2s ease-in-out infinite;
+}
+@keyframes scrollDown {
+  0% { transform: translateY(-100%); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateY(400%); opacity: 0; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION BASE
+   ═══════════════════════════════════════════════════════════════ */
+.section { padding: 7rem 2.5rem; position: relative; }
+.section-alt { background: var(--bg-alt); }
+.container { max-width: var(--container); margin: 0 auto; }
+.container-narrow { max-width: var(--container-narrow); margin: 0 auto; }
+
+.section-head { margin-bottom: 3.5rem; }
+
+.section-label {
+  display: inline-flex; align-items: center; gap: 0.8rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.2rem;
+  font-weight: 700;
+}
+.section-label::before {
+  content: '';
+  width: 32px; height: 1.5px;
+  background: var(--accent);
+  display: block;
+}
+
+.section-title {
+  font-family: var(--font-hindi);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  line-height: 1.2;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  margin-bottom: 1rem;
+}
+.section-subtitle {
+  font-size: 1.05rem;
+  color: var(--text-soft);
+  font-weight: 300;
+  max-width: 600px;
+  line-height: 1.9;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ABOUT
+   ═══════════════════════════════════════════════════════════════ */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.about-visual {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--bg-deep), var(--bg-alt));
+  border: 1px solid var(--border);
+  overflow: hidden;
+  display: grid; place-items: center;
+}
+.about-visual::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: 
+    radial-gradient(circle at 30% 30%, var(--accent-glow), transparent 50%),
+    radial-gradient(circle at 70% 70%, var(--accent-glow), transparent 50%);
+}
+.about-visual .quote-mark {
+  font-family: var(--font-latin);
+  font-size: 12rem;
+  line-height: 0.7;
+  color: var(--accent);
+  opacity: 0.25;
+  font-style: italic;
+  position: relative;
+  z-index: 1;
+}
+.about-visual .quote-text {
+  position: absolute;
+  bottom: 2rem; left: 2rem; right: 2rem;
+  font-family: var(--font-hindi);
+  font-size: 1.1rem;
+  font-style: italic;
+  color: var(--text-soft);
+  line-height: 1.8;
+  z-index: 1;
+}
+
+.about-content .section-head { margin-bottom: 2rem; }
+.about-text {
+  font-size: 1.08rem;
+  color: var(--text-soft);
+  line-height: 2;
+  font-weight: 300;
+}
+.about-text p + p { margin-top: 1.5rem; }
+.about-text em { color: var(--accent); font-style: italic; font-weight: 400; }
+
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 3rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--border);
+}
+.stat-num {
+  font-family: var(--font-latin);
+  font-size: 2.8rem;
+  color: var(--accent);
+  line-height: 1;
+  font-style: italic;
+  margin-bottom: 0.4rem;
+}
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CHAPTERS GRID
+   ═══════════════════════════════════════════════════════════════ */
+.chapters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.chapter-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 2rem 1.8rem;
+  cursor: pointer;
+  transition: all var(--t) var(--ease);
+  position: relative;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  min-height: 260px;
+  text-align: left;
+}
+.chapter-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-soft));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s var(--ease-out);
+}
+.chapter-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), var(--accent-glow), transparent 40%);
+  opacity: 0;
+  transition: opacity var(--t) var(--ease);
+  pointer-events: none;
+}
+.chapter-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--accent-soft);
+}
+.chapter-card:hover::before { transform: scaleX(1); }
+.chapter-card:hover::after { opacity: 0.6; }
+
+.chapter-num {
+  font-family: var(--font-latin);
+  font-size: 3.5rem;
+  font-style: italic;
+  color: var(--accent-soft);
+  line-height: 1;
+  margin-bottom: 0.8rem;
+  opacity: 0.5;
+  transition: all var(--t) var(--ease);
+}
+.chapter-card:hover .chapter-num { opacity: 1; transform: translateX(4px); }
+
+.chapter-title {
+  font-family: var(--font-hindi);
+  font-size: 1.5rem;
+  font-weight: 400;
+  margin-bottom: 0.7rem;
+  line-height: 1.3;
+}
+.chapter-excerpt {
+  color: var(--text-soft);
+  font-size: 0.95rem;
+  font-weight: 300;
+  line-height: 1.7;
+  flex-grow: 1;
+}
+.chapter-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--accent);
+  font-weight: 500;
+}
+.chapter-read {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  transition: gap var(--t) var(--ease);
+}
+.chapter-card:hover .chapter-read { gap: 0.8rem; }
+.chapter-time { color: var(--text-mute); font-weight: 400; }
+
+/* ═══════════════════════════════════════════════════════════════
+   CHAPTER READER (MODAL)
+   ═══════════════════════════════════════════════════════════════ */
+.reader {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 2000;
+  display: flex; flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.5s var(--ease-out);
+}
+.reader.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.reader-header {
+  padding: 1rem 2rem;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  position: sticky; top: 0;
+  z-index: 10;
+}
+.reader-title-mini {
+  font-family: var(--font-hindi);
+  font-size: 1.05rem;
+  color: var(--text);
+  font-weight: 400;
+}
+.reader-actions { display: flex; gap: 0.6rem; align-items: center; }
+
+.reader-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4rem 2rem 6rem;
+  scroll-behavior: smooth;
+}
+
+.reader-content {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.reader-meta {
+  display: flex; align-items: center; gap: 1rem;
+  color: var(--accent);
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+.reader-meta .divider {
+  width: 30px; height: 1px; background: var(--accent);
+}
+
+.reader-h1 {
+  font-family: var(--font-hindi);
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  line-height: 1.2;
+  font-weight: 400;
+  margin-bottom: 2.5rem;
+}
+
+.reader-text {
+  font-size: 1.15rem;
+  line-height: 2.1;
+  color: var(--text-soft);
+  font-weight: 300;
+  letter-spacing: 0.005em;
+}
+.reader-text p { margin-bottom: 1.5rem; }
+.reader-text p:first-of-type::first-letter {
+  font-family: var(--font-hindi);
+  font-size: 4rem;
+  float: left;
+  line-height: 0.9;
+  margin: 0.25rem 0.75rem 0 0;
+  color: var(--accent);
+  font-weight: 400;
+}
+
+.reader-end {
+  margin-top: 4rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+.reader-end-mark {
+  font-size: 1.5rem;
+  color: var(--accent);
+  opacity: 0.5;
+  letter-spacing: 0.5em;
+  margin-bottom: 2rem;
+}
+.reader-nav {
+  display: flex; justify-content: space-between; gap: 1rem;
+  margin-top: 2rem;
+}
+.reader-nav button {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all var(--t) var(--ease);
+  display: flex; align-items: center; gap: 0.5rem;
+  text-align: left;
+}
+.reader-nav button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+.reader-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+.reader-nav button.next { justify-content: flex-end; text-align: right; }
+.reader-nav .nav-label { display: block; font-size: 0.72rem; color: var(--text-mute); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.15rem; font-weight: 600; }
+.reader-nav .nav-title { display: block; font-weight: 500; }
+
+/* ═══════════════════════════════════════════════════════════════
+   COMMENTS
+   ═══════════════════════════════════════════════════════════════ */
+.comment-form {
+  margin-top: 2.5rem;
+  display: flex; flex-direction: column; gap: 1rem;
+  background: var(--card);
+  padding: 2rem;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.field { display: flex; flex-direction: column; gap: 0.4rem; }
+.field label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-soft);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.field label .opt { color: var(--text-mute); font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+input, textarea {
+  width: 100%;
+  padding: 0.9rem 1.1rem;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 0.98rem;
+  color: var(--text);
+  transition: all var(--t) var(--ease);
+  resize: vertical;
+  font-weight: 400;
+}
+input::placeholder, textarea::placeholder { color: var(--text-mute); font-weight: 300; }
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--card);
+  box-shadow: 0 0 0 4px var(--accent-glow);
+}
+textarea { min-height: 120px; line-height: 1.7; }
+
+.btn-submit {
+  align-self: flex-start;
+  padding: 0.95rem 2rem;
+  background: var(--text);
+  color: var(--bg);
+  border-radius: 100px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all var(--t) var(--ease);
+  display: inline-flex; align-items: center; gap: 0.5rem;
+}
+.btn-submit:hover {
+  background: var(--accent);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px var(--accent-glow);
+}
+.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.comments-list {
+  margin-top: 2.5rem;
+  display: flex; flex-direction: column; gap: 1rem;
+}
+
+.comment-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  animation: commentIn 0.5s var(--ease-out);
+  transition: all var(--t) var(--ease);
+}
+.comment-item:hover {
+  border-color: var(--accent-soft);
+  box-shadow: var(--shadow-sm);
+}
+@keyframes commentIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.comment-head {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 0.8rem;
+  gap: 1rem;
+}
+.comment-author {
+  display: flex; align-items: center; gap: 0.8rem;
+}
+.comment-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+  display: grid; place-items: center;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.comment-name { font-weight: 600; font-size: 0.95rem; color: var(--text); }
+.comment-time { font-size: 0.78rem; color: var(--text-mute); }
+.comment-text { color: var(--text-soft); font-weight: 300; line-height: 1.7; }
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  color: var(--text-mute);
+  font-style: italic;
+  font-weight: 300;
+  border: 1px dashed var(--border-strong);
+  border-radius: 14px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONTACT
+   ═══════════════════════════════════════════════════════════════ */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 4rem;
+  align-items: start;
+}
+.contact-info h3 {
+  font-family: var(--font-hindi);
+  font-size: 1.8rem;
+  font-weight: 400;
+  margin-bottom: 1rem;
+}
+.contact-info p {
+  color: var(--text-soft);
+  font-weight: 300;
+  line-height: 1.9;
+  margin-bottom: 2rem;
+}
+.contact-links { display: flex; flex-direction: column; gap: 1rem; }
+.contact-link {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  transition: all var(--t) var(--ease);
+}
+.contact-link:hover {
+  border-color: var(--accent);
+  transform: translateX(4px);
+  box-shadow: var(--shadow-sm);
+}
+.contact-link-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: var(--bg-alt);
+  display: grid; place-items: center;
+  color: var(--accent);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.contact-link-label { font-size: 0.75rem; color: var(--text-mute); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+.contact-link-value { font-size: 0.95rem; color: var(--text); font-weight: 500; }
+
+.contact-form {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 2.5rem;
+  display: flex; flex-direction: column; gap: 1.2rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOAST
+   ═══════════════════════════════════════════════════════════════ */
+.toast {
+  position: fixed; bottom: 2rem; left: 50%;
+  transform: translateX(-50%) translateY(120px);
+  background: var(--text);
+  color: var(--bg);
+  padding: 1rem 1.8rem;
+  border-radius: 100px;
+  font-weight: 500;
+  font-size: 0.92rem;
+  box-shadow: var(--shadow-lg);
+  z-index: 3000;
+  opacity: 0;
+  display: flex; align-items: center; gap: 0.6rem;
+  transition: all 0.5s var(--ease-bounce);
+  max-width: 90vw;
+  white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.toast .icon {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: grid; place-items: center;
+  font-size: 0.7rem;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════════ */
+.footer {
+  padding: 4rem 2.5rem 2rem;
+  border-top: 1px solid var(--border);
+  background: var(--bg-alt);
+}
+.footer-inner {
+  max-width: var(--container);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+}
+.footer-brand {
+  font-family: var(--font-hindi);
+  font-size: 1.4rem;
+  color: var(--text);
+}
+.footer-brand .accent { color: var(--accent); font-style: italic; }
+.footer-tagline {
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  margin-top: 0.4rem;
+  font-weight: 300;
+}
+.footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+.footer-links a {
+  font-size: 0.9rem;
+  color: var(--text-soft);
+  font-weight: 500;
+  transition: color var(--t) var(--ease);
+}
+.footer-links a:hover { color: var(--accent); }
+.footer-bottom {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding-top: 1.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-mute);
+  font-weight: 300;
+}
+.footer-bottom .heart {
+  color: var(--accent);
+  display: inline-block;
+  animation: heartbeat 1.8s infinite;
+}
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  15% { transform: scale(1.25); }
+  30% { transform: scale(1); }
+  45% { transform: scale(1.15); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLL REVEAL
+   ═══════════════════════════════════════════════════════════════ */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+}
+.reveal.active { opacity: 1; transform: translateY(0); }
+
+/* ═══════════════════════════════════════════════════════════════
+   BACK TO TOP
+   ═══════════════════════════════════════════════════════════════ */
+.back-top {
+  position: fixed;
+  bottom: 2rem; right: 2rem;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--text);
+  color: var(--bg);
+  display: grid; place-items: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 900;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all var(--t) var(--ease);
+  box-shadow: var(--shadow-md);
+}
+.back-top.show { opacity: 1; visibility: visible; transform: translateY(0); }
+.back-top:hover {
+  background: var(--accent);
+  color: #fff;
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px var(--accent-glow);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .about-visual { aspect-ratio: 4 / 3; max-width: 400px; margin: 0 auto; }
+  .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+}
+
+@media (max-width: 768px) {
+  .nav { padding: 1rem 1.2rem; }
+  .nav.scrolled { padding: 0.7rem 1.2rem; }
+
+  .menu-btn { display: grid; }
+  .nav-links {
+    position: fixed;
+    top: 0; right: 0;
+    width: 82%; height: 100vh;
+    background: var(--bg);
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    transform: translateX(105%);
+    transition: transform 0.5s var(--ease-out);
+    box-shadow: -30px 0 80px rgba(0,0,0,0.15);
+    z-index: 999;
+  }
+  .nav-links.open { transform: translateX(0); }
+  .nav-links a { font-size: 1.15rem; padding: 0.7rem 1.2rem; width: 100%; }
+
+  .section { padding: 5rem 1.2rem; }
+  .hero { padding: 6rem 1.2rem 4rem; }
+
+  .form-row { grid-template-columns: 1fr; }
+
+  .reader-body { padding: 2.5rem 1.3rem 5rem; }
+  .reader-header { padding: 0.9rem 1.2rem; }
+  .reader-title-mini { font-size: 0.9rem; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .reader-text { font-size: 1.05rem; line-height: 2; }
+  .reader-text p:first-of-type::first-letter { font-size: 3rem; }
+
+  .reader-nav { flex-direction: column; }
+  .reader-nav button.next { justify-content: flex-start; text-align: left; }
+
+  .about-stats { grid-template-columns: 1fr 1fr; }
+  .footer-inner { flex-direction: column; align-items: flex-start; text-align: left; }
+
+  .back-top { bottom: 1.2rem; right: 1.2rem; width: 44px; height: 44px; }
+
+  .toast { font-size: 0.85rem; padding: 0.85rem 1.3rem; white-space: normal; }
+}
+
+@media (max-width: 480px) {
+  .hero-title { font-size: 3rem; }
+  .section-title { font-size: 1.9rem; }
+  .chapter-card { padding: 1.6rem 1.4rem; min-height: 230px; }
+  .chapter-num { font-size: 2.8rem; }
+  .comment-form, .contact-form { padding: 1.5rem; }
+  .about-stats { grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .stat-num { font-size: 2.2rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Loader -->
+<div id="loader">
+  <div class="loader-content">
+    <div class="loader-title">अधूरी दास्तान<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
+    <div class="loader-bar"></div>
+  </div>
+</div>
+
+<!-- Reading Progress -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- Navbar -->
+<nav class="nav" id="nav">
+  <a href="#home" class="nav-logo">अधूरी <span class="accent">दास्तान</span></a>
+
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#home" data-nav>होम</a></li>
+    <li><a href="#about" data-nav>परिचय</a></li>
+    <li><a href="#chapters" data-nav>अध्याय</a></li>
+    <li><a href="#comments" data-nav>विचार</a></li>
+    <li><a href="#contact" data-nav>संपर्क</a></li>
+  </ul>
+
+  <div class="nav-actions">
+    <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">🌙</button>
+    <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<header class="hero" id="home">
+  <div class="hero-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="stars-container" id="stars"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-badge">एक अधूरी कहानी</div>
+    <h1 class="hero-title">अधूरी <span class="accent">दास्तान</span></h1>
+    <p class="hero-subtitle">
+      कुछ यादें जो दिल में रह गईं, कुछ बातें जो कह नहीं पाए, और <em>एक कहानी</em> जो कभी पूरी नहीं हुई...
+    </p>
+    <div class="hero-actions">
+      <a href="#chapters" class="btn btn-primary">
+        पढ़ना शुरू करें <span class="arrow">→</span>
+      </a>
+      <a href="#about" class="btn btn-ghost">और जानें</a>
+    </div>
+  </div>
+
+  <div class="scroll-cue">
+    <span>स्क्रॉल करें</span>
+    <div class="scroll-cue-line"></div>
+  </div>
+</header>
+
+<!-- About -->
+<section class="section" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-visual reveal">
+        <div class="quote-mark">"</div>
+        <p class="quote-text">कुछ कहानियाँ पूरी होकर भी अधूरी लगती हैं, और कुछ अधूरी होकर भी पूरी।</p>
+      </div>
+
+      <div class="about-content reveal">
+        <div class="section-head">
+          <div class="section-label">परिचय</div>
+          <h2 class="section-title">एक कहानी जो दिल से लिखी गई है</h2>
+        </div>
+        <div class="about-text">
+          <p>
+            यह वेबसाइट उन सारी भावनाओं का संग्रह है जो शब्दों में ढल नहीं पाईं। हर अध्याय में एक 
+            <em>अधूरी याद</em> है — एक ऐसा पल जो वक़्त के साथ धुंधला तो हुआ, मगर दिल से मिटा नहीं।
+          </p>
+          <p>
+            यहाँ हर पन्ना एक धड़कन है, और हर शब्द एक साँस। अगर आप भी कभी किसी अधूरी कहानी का 
+            हिस्सा रहे हैं — तो यह जगह आपकी भी है।
+          </p>
+        </div>
+
+        <div class="about-stats">
+          <div>
+            <div class="stat-num" data-count="5">0</div>
+            <div class="stat-label">अध्याय</div>
+          </div>
+          <div>
+            <div class="stat-num" data-count="1000" data-suffix="+">0</div>
+            <div class="stat-label">शब्द</div>
+          </div>
+          <div>
+            <div class="stat-num" data-count="1">0</div>
+            <div class="stat-label">दिल</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Chapters -->
+<section class="section section-alt" id="chapters">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="section-label">कहानी के अध्याय</div>
+      <h2 class="section-title">हर अध्याय, एक नई याद</h2>
+      <p class="section-subtitle">पढ़ने के लिए किसी भी अध्याय पर क्लिक करें। हर अध्याय आपको एक नई दुनिया में ले जाएगा।</p>
+    </div>
+    <div class="chapters-grid" id="chaptersGrid"></div>
+  </div>
+</section>
+
+<!-- Comments -->
+<section class="section" id="comments">
+  <div class="container-narrow">
+    <div class="section-head reveal">
+      <div class="section-label">विचार और संवाद</div>
+      <h2 class="section-title">अपने विचार साझा करें</h2>
+      <p class="section-subtitle">
+        इस कहानी ने आपके दिल को छुआ? कोई याद ताज़ा हुई? नीचे अपनी भावनाएँ लिखकर भेजें।
+      </p>
+    </div>
+
+    <form class="comment-form reveal" id="commentForm">
+      <div class="form-row">
+        <div class="field">
+          <label for="commentName">आपका नाम</label>
+          <input type="text" id="commentName" placeholder="जैसे: राहुल" required maxlength="50" />
+        </div>
+        <div class="field">
+          <label for="commentEmail">ईमेल <span class="opt">(वैकल्पिक)</span></label>
+          <input type="email" id="commentEmail" placeholder="rahul@example.com" maxlength="80" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="commentText">आपका विचार</label>
+        <textarea id="commentText" placeholder="अपने दिल की बात यहाँ लिखें..." required maxlength="500"></textarea>
+      </div>
+      <button type="submit" class="btn-submit">
+        विचार भेजें <span>→</span>
+      </button>
+    </form>
+
+    <div class="comments-list" id="commentsList"></div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section class="section section-alt" id="contact">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <div class="section-label">संपर्क बनाएं</div>
+        <h3>कोई बात कहनी है?</h3>
+        <p>
+          कहानी के बारे में कोई सुझाव, कोई शिकायत, या बस एक "हैलो" कहना है — नीचे लिख भेजें। 
+          हर संदेश पढ़ा जाता है, और हर बात का जवाब दिया जाता है।
+        </p>
+        <div class="contact-links">
+          <a href="mailto:hello@adhauridastaan.com" class="contact-link">
+            <div class="contact-link-icon">✉</div>
+            <div>
+              <div class="contact-link-label">ईमेल</div>
+              <div class="contact-link-value">hello@adhauridastaan.com</div>
+            </div>
+          </a>
+          <a href="#" class="contact-link">
+            <div class="contact-link-icon">✦</div>
+            <div>
+              <div class="contact-link-label">इंस्टाग्राम</div>
+              <div class="contact-link-value">@adhauri.dastaan</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <form class="contact-form reveal" id="contactForm">
+        <div class="form-row">
+          <div class="field">
+            <label for="contactName">आपका नाम</label>
+            <input type="text" id="contactName" placeholder="आपका नाम" required maxlength="50" />
+          </div>
+          <div class="field">
+            <label for="contactEmail">आपका ईमेल</label>
+            <input type="email" id="contactEmail" placeholder="you@example.com" required maxlength="80" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="contactSubject">विषय</label>
+          <input type="text" id="contactSubject" placeholder="किस बारे में बात करनी है?" required maxlength="100" />
+        </div>
+        <div class="field">
+          <label for="contactMessage">आपका संदेश</label>
+          <textarea id="contactMessage" placeholder="अपना संदेश यहाँ लिखें..." required maxlength="1000"></textarea>
+        </div>
+        <button type="submit" class="btn-submit">
+          संदेश भेजें <span>→</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">अधूरी <span class="accent">दास्तान</span></div>
+      <div class="footer-tagline">एक कहानी जो कभी पूरी नहीं हुई, मगर हमेशा ज़िंदा रहेगी।</div>
+    </div>
+    <div class="footer-links">
+      <a href="#home">होम</a>
+      <a href="#about">परिचय</a>
+      <a href="#chapters">अध्याय</a>
+      <a href="#comments">विचार</a>
+      <a href="#contact">संपर्क</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2024 अधूरी दास्तान · Made with <span class="heart">♥</span> in India
+  </div>
+</footer>
+
+<!-- Chapter Reader -->
+<div class="reader" id="reader">
+  <div class="reader-header">
+    <div class="reader-title-mini" id="readerMini">अध्याय</div>
+    <div class="reader-actions">
+      <button class="icon-btn" id="readerTheme" aria-label="Theme">🌙</button>
+      <button class="icon-btn" id="readerClose" aria-label="Close">✕</button>
+    </div>
+  </div>
+  <div class="reader-body" id="readerBody">
+    <div class="reader-content" id="readerContent"></div>
+  </div>
+</div>
+
+<!-- Back to Top -->
+<button class="back-top" id="backTop" aria-label="Back to top">↑</button>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span class="icon">✓</span>
+  <span id="toastMsg">Success</span>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   DATA — CHAPTERS
+   ═══════════════════════════════════════════════════════════════ */
+const CHAPTERS = [
+  {
+    num: "01",
+    title: "पहली मुलाक़ात",
+    excerpt: "वो पहला पल, जब दो अनजान नज़रें मिलीं और वक़्त थम-सा गया।",
+    meta: "यादें",
+    readTime: "2 मिनट",
+    content: [
+      "वो पहली मुलाक़ात कोई खास नहीं थी। न कोई बारिश थी, न कोई झरना। बस एक आम सी शाम थी, और आम से शब्द। मगर फिर भी कुछ तो था उस पल में जो अब तक दिल से मिट नहीं पाया।",
+      "नज़रें मिलीं, मुस्कुराहट बँटी, और फिर वो पल हमेशा के लिए दिल में बस गया। कुछ चीज़ें शब्दों की मोहताज नहीं होतीं — वो बस महसूस होती हैं।",
+      "आज भी जब उस शाम को याद करता हूँ, तो लगता है वक़्त ने उसी एक पल में सब कुछ कह दिया था। बस हम समझ नहीं पाए। काश, उस पल को थोड़ा और जी पाते।"
+    ]
+  },
+  {
+    num: "02",
+    title: "बातें जो अधूरी रहीं",
+    excerpt: "कुछ बातें कहने से पहले ही वक़्त आगे बढ़ गया और शब्द वहीं रह गए।",
+    meta: "अधूरी बातें",
+    readTime: "2 मिनट",
+    content: [
+      "बहुत कुछ कहना था मुझे। तुम्हारे बारे में, अपने बारे में, और हमारे बारे में। मगर हर बार कुछ न कुछ रह गया — कोई डर, कोई झिझक, या बस गलत वक़्त।",
+      "कुछ बातें कहने का वक़्त होता है, और उस वक़्त को अगर हम चूक जाएँ — तो वो बातें हमेशा के लिए अधूरी रह जाती हैं। फिर कितनी भी कोशिश करो, वो वापस नहीं आतीं।",
+      "आज भी जब तुम्हें देखता हूँ, तो लगता है वो सारी बातें कहीं मेरे भीतर छिपी हुई हैं — बस कहने की हिम्मत नहीं होती। और शायद अब कभी होगी भी नहीं।"
+    ]
+  },
+  {
+    num: "03",
+    title: "आख़िरी मुलाक़ात",
+    excerpt: "जुदाई का वो पल, जब दिल कह रहा था रुक जाओ, और क़दम बढ़ते जा रहे थे।",
+    meta: "विदाई",
+    readTime: "3 मिनट",
+    content: [
+      "जुदा होते वक़्त कोई नहीं कहता कि यह आख़िरी बार है। हम दोनों ने भी नहीं कहा। शायद इसलिए कि हम दोनों को यक़ीन था — हम फिर मिलेंगे।",
+      "मगर कुछ विदाइयाँ हमेशा के लिए होती हैं। और उस दिन हमें पता भी नहीं था कि यह वो आख़िरी बार है जब हम एक-दूसरे को देख रहे हैं। हमने आख़िरी बार एक-दूसरे को देखा, और समझे बिना चले गए।",
+      "आज भी जब पुरानी तस्वीरें देखता हूँ, तो लगता है वो सारा वक़्त कहीं एक अलमारी में बंद है — जिसकी चाबी खो गई है। और वो अलमारी कभी नहीं खुलेगी।"
+    ]
+  },
+  {
+    num: "04",
+    title: "यादों का सफ़र",
+    excerpt: "जब अकेले में बैठकर पुरानी यादें किसी पुरानी फिल्म की तरह चलने लगती हैं।",
+    meta: "यादें",
+    readTime: "2 मिनट",
+    content: [
+      "यादें अजीब होती हैं। वो कभी पूरी तरह से नहीं जातीं, और कभी पूरी तरह से साथ भी नहीं रहतीं। वो बस बीच में कहीं लटकी रहती हैं — न ज़िंदा, न मुर्दा।",
+      "कुछ रातों में वो सब वापस आता है — तुम्हारी हँसी, तुम्हारी आवाज़, और वो सारी छोटी-छोटी बातें जो उस वक़्त बड़ी लगती थीं। और मैं बस देखता रह जाता हूँ।",
+      "और फिर सुबह होती है, और सब कुछ वैसा ही हो जाता है — जैसे कुछ हुआ ही न हो। मगर होता है, हर रात होता है। और हर रात मैं थोड़ा और टूट जाता हूँ।"
+    ]
+  },
+  {
+    num: "05",
+    title: "क्या हम फिर मिलेंगे?",
+    excerpt: "एक सवाल जो हर अधूरी कहानी के अंत में रह जाता है।",
+    meta: "अंत या शुरुआत?",
+    readTime: "2 मिनट",
+    content: [
+      "कुछ कहानियाँ ख़त्म नहीं होतीं, वो बस अधूरी रह जाती हैं। और अधूरी कहानियाँ हमेशा जीवित रहती हैं — दिल में, यादों में, और किसी कोने में।",
+      "पता नहीं क्या हम फिर मिलेंगे या नहीं। पता नहीं वो सारी बातें कभी कह पाऊँगा या नहीं। मगर इतना पता है — यह दास्तान अधूरी होकर भी मेरी है। और यही सबसे बड़ी बात है।",
+      "और शायद यही अधूरापन इसे इतना ख़ूबसूरत बनाता है। क्योंकि जो पूरा हो जाता है, वो भूल जाता है। और जो अधूरा रह जाता है, वो हमेशा याद रहता है।"
+    ]
+  }
+];
+
+/* ═══════════════════════════════════════════════════════════════
+   STATE & HELPERS
+   ═══════════════════════════════════════════════════════════════ */
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => document.querySelectorAll(sel);
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function showToast(msg, icon = '✓') {
+  const toast = $('#toast');
+  $('#toastMsg').textContent = msg;
+  toast.querySelector('.icon').textContent = icon;
+  toast.classList.add('show');
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(() => toast.classList.remove('show'), 3200);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LOADER
+   ═══════════════════════════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    $('#loader').classList.add('hidden');
+    document.body.classList.remove('no-scroll');
+  }, 800);
+});
+document.body.classList.add('no-scroll');
+
+/* ═══════════════════════════════════════════════════════════════
+   THEME
+   ═══════════════════════════════════════════════════════════════ */
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  const icon = theme === 'dark' ? '☀️' : '🌙';
+  const metaColor = theme === 'dark' ? '#100e0b' : '#faf6f0';
+  $('#themeToggle').textContent = icon;
+  $('#readerTheme').textContent = icon;
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', metaColor);
+}
+
+const savedTheme = localStorage.getItem('theme') || 'light';
+applyTheme(savedTheme);
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  localStorage.setItem('theme', next);
+}
+
+$('#themeToggle').addEventListener('click', toggleTheme);
+$('#readerTheme').addEventListener('click', toggleTheme);
+
+/* ═══════════════════════════════════════════════════════════════
+   STARS
+   ═══════════════════════════════════════════════════════════════ */
+(function () {
+  const el = $('#stars');
+  const count = window.innerWidth < 768 ? 25 : 60;
+  let html = '';
+  for (let i = 0; i < count; i++) {
+    const top = Math.random() * 100;
+    const left = Math.random() * 100;
+    const delay = Math.random() * 4;
+    const dur = 3 + Math.random() * 3;
+    const size = Math.random() * 2 + 1;
+    html += `<div class="star" style="top:${top}%;left:${left}%;animation-delay:${delay}s;animation-duration:${dur}s;width:${size}px;height:${size}px;"></div>`;
+  }
+  el.innerHTML = html;
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   NAVBAR
+   ═══════════════════════════════════════════════════════════════ */
+const nav = $('#nav');
+const navLinks = $('#navLinks');
+const menuBtn = $('#menuBtn');
+
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 40) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+}, { passive: true });
+
+menuBtn.addEventListener('click', () => {
+  const open = navLinks.classList.toggle('open');
+  menuBtn.textContent = open ? '✕' : '☰';
+});
+
+$$('#navLinks a').forEach(a => {
+  a.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    menuBtn.textContent = '☰';
+  });
+});
+
+/* Active nav highlighting */
+const sections = ['home', 'about', 'chapters', 'comments', 'contact'];
+const navObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      $$('#navLinks a').forEach(a => a.classList.remove('active'));
+      const link = document.querySelector(`#navLinks a[href="#${e.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-40% 0px -55% 0px' });
+sections.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) navObserver.observe(el);
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   PROGRESS BAR
+   ═══════════════════════════════════════════════════════════════ */
+const progressBar = $('#progressBar');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = h > 0 ? (window.scrollY / h) * 100 : 0;
+  progressBar.style.width = pct + '%';
+}, { passive: true });
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLL REVEAL
+   ═══════════════════════════════════════════════════════════════ */
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('active');
+      revealObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+
+function observeReveals() {
+  $$('.reveal').forEach(el => revealObserver.observe(el));
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   COUNTER ANIMATION
+   ═══════════════════════════════════════════════════════════════ */
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const el = e.target;
+      const target = parseInt(el.dataset.count, 10);
+      const suffix = el.dataset.suffix || '';
+      const dur = 1500;
+      const start = performance.now();
+      function step(now) {
+        const t = Math.min((now - start) / dur, 1);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.floor(eased * target) + suffix;
+        if (t < 1) requestAnimationFrame(step);
+        else el.textContent = target + suffix;
+      }
+      requestAnimationFrame(step);
+      counterObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+
+$$('.stat-num').forEach(el => counterObserver.observe(el));
+
+/* ═══════════════════════════════════════════════════════════════
+   RENDER CHAPTERS
+   ═══════════════════════════════════════════════════════════════ */
+const chaptersGrid = $('#chaptersGrid');
+
+CHAPTERS.forEach((ch, i) => {
+  const card = document.createElement('button');
+  card.type = 'button';
+  card.className = 'chapter-card reveal';
+  card.style.transitionDelay = (i * 0.08) + 's';
+  card.dataset.index = i;
+  card.setAttribute('aria-label', `पढ़ें: ${ch.title}`);
+  card.innerHTML = `
+    <div class="chapter-num">${ch.num}</div>
+    <h3 class="chapter-title">${ch.title}</h3>
+    <p class="chapter-excerpt">${ch.excerpt}</p>
+    <div class="chapter-footer">
+      <span class="chapter-read">पढ़ें <span>→</span></span>
+      <span class="chapter-time">${ch.readTime}</span>
+    </div>
+  `;
+
+  // Mouse-follow glow
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    card.style.setProperty('--mx', x + '%');
+    card.style.setProperty('--my', y + '%');
+  });
+
+  card.addEventListener('click', () => openReader(i));
+  chaptersGrid.appendChild(card);
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   READER (CHAPTER VIEW)
+   ═══════════════════════════════════════════════════════════════ */
+const reader = $('#reader');
+const readerBody = $('#readerBody');
+const readerContent = $('#readerContent');
+const readerMini = $('#readerMini');
+let currentChapter = 0;
+
+function openReader(index) {
+  currentChapter = index;
+  renderChapter(index);
+  reader.classList.add('active');
+  document.body.classList.add('no-scroll');
+  readerBody.scrollTop = 0;
+  history.pushState({ chapter: index }, '', `#chapter-${index + 1}`);
+}
+
+function renderChapter(index) {
+  const ch = CHAPTERS[index];
+  readerMini.textContent = `अध्याय ${ch.num} · ${ch.title}`;
+
+  const hasPrev = index > 0;
+  const hasNext = index < CHAPTERS.length - 1;
+  const prev = hasPrev ? CHAPTERS[index - 1] : null;
+  const next = hasNext ? CHAPTERS[index + 1] : null;
+
+  readerContent.innerHTML = `
+    <div class="reader-meta">
+      <span>अध्याय ${ch.num}</span>
+      <span class="divider"></span>
+      <span>${ch.meta}</span>
+      <span class="divider"></span>
+      <span>${ch.readTime}</span>
+    </div>
+    <h1 class="reader-h1">${ch.title}</h1>
+    <div class="reader-text">
+      ${ch.content.map(p => `<p>${p}</p>`).join('')}
+    </div>
+    <div class="reader-end">
+      <div class="reader-end-mark">✦ ✦ ✦</div>
+      <div class="reader-nav">
+        <button class="prev" ${!hasPrev ? 'disabled' : ''} data-nav="prev">
+          <div>
+            <span class="nav-label">← पिछला</span>
+            <span class="nav-title">${prev ? prev.title : 'कोई नहीं'}</span>
+          </div>
+        </button>
+        <button class="next" ${!hasNext ? 'disabled' : ''} data-nav="next">
+          <div>
+            <span class="nav-label">अगला →</span>
+            <span class="nav-title">${next ? next.title : 'समाप्त'}</span>
+          </div>
+        </button>
+      </div>
+    </div>
+  `;
+
+  const prevBtn = readerContent.querySelector('[data-nav="prev"]');
+  const nextBtn = readerContent.querySelector('[data-nav="next"]');
+  if (prevBtn && hasPrev) prevBtn.addEventListener('click', () => goChapter(index - 1));
+  if (nextBtn && hasNext) nextBtn.addEventListener('click', () => goChapter(index + 1));
+}
+
+function goChapter(index) {
+  if (index < 0 || index >= CHAPTERS.length) return;
+  currentChapter = index;
+  readerBody.style.opacity = '0';
+  readerBody.style.transform = 'translateY(10px)';
+  readerBody.style.transition = 'opacity 0.25s, transform 0.25s';
+  setTimeout(() => {
+    renderChapter(index);
+    readerBody.scrollTop = 0;
+    readerBody.style.opacity = '1';
+    readerBody.style.transform = 'translateY(0)';
+    history.replaceState({ chapter: index }, '', `#chapter-${index + 1}`);
+  }, 250);
+}
+
+function closeReader() {
+  reader.classList.remove('active');
+  document.body.classList.remove('no-scroll');
+  if (location.hash.startsWith('#chapter-')) {
+    history.replaceState(null, '', '#chapters');
+  }
+}
+
+$('#readerClose').addEventListener('click', closeReader);
+
+document.addEventListener('keydown', (e) => {
+  if (!reader.classList.contains('active')) return;
+  if (e.key === 'Escape') closeReader();
+  if (e.key === 'ArrowRight' && currentChapter < CHAPTERS.length - 1) goChapter(currentChapter + 1);
+  if (e.key === 'ArrowLeft' && currentChapter > 0) goChapter(currentChapter - 1);
+});
+
+/* Handle back button */
+window.addEventListener('popstate', () => {
+  if (reader.classList.contains('active')) closeReader();
+});
+
+/* Open reader if URL has hash */
+if (location.hash.startsWith('#chapter-')) {
+  const n = parseInt(location.hash.replace('#chapter-', ''), 10);
+  if (n >= 1 && n <= CHAPTERS.length) {
+    setTimeout(() => openReader(n - 1), 1200);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   COMMENTS
+   ═══════════════════════════════════════════════════════════════ */
+const COMMENT_KEY = 'adhauri_dastaan_comments_v2';
+const commentForm = $('#commentForm');
+const commentsList = $('#commentsList');
+
+function getComments() {
+  try { return JSON.parse(localStorage.getItem(COMMENT_KEY) || '[]'); }
+  catch { return []; }
+}
+
+function saveComments(list) {
+  localStorage.setItem(COMMENT_KEY, JSON.stringify(list));
+}
+
+function formatTime(ts) {
+  const d = new Date(ts);
+  const diff = (Date.now() - ts) / 1000;
+  if (diff < 60) return 'अभी';
+  if (diff < 3600) return `${Math.floor(diff / 60)} मिनट पहले`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)} घंटे पहले`;
+  if (diff < 604800) return `${Math.floor(diff / 86400)} दिन पहले`;
+  return d.toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function renderComments() {
+  const list = getComments();
+  if (!list.length) {
+    commentsList.innerHTML = `<div class="empty-state">अभी तक कोई विचार साझा नहीं किया गया। पहले बनें! ✨</div>`;
+    return;
+  }
+  commentsList.innerHTML = list.map(c => `
+    <div class="comment-item">
+      <div class="comment-head">
+        <div class="comment-author">
+          <div class="comment-avatar">${escapeHtml(c.name.charAt(0).toUpperCase())}</div>
+          <div>
+            <div class="comment-name">${escapeHtml(c.name)}</div>
+            <div class="comment-time">${formatTime(c.ts)}</div>
+          </div>
+        </div>
+      </div>
+      <p class="comment-text">${escapeHtml(c.text).replace(/\n/g, '<br>')}</p>
+    </div>
+  `).join('');
+}
+
+commentForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const name = $('#commentName').value.trim();
+  const text = $('#commentText').value.trim();
+  if (!name || !text) {
+    showToast('कृपया नाम और विचार दोनों भरें', '!');
+    return;
+  }
+
+  const list = getComments();
+  list.unshift({ name, text, ts: Date.now() });
+  saveComments(list.slice(0, 100)); // keep last 100
+  renderComments();
+  commentForm.reset();
+  showToast('आपका विचार साझा हो गया! धन्यवाद ✨');
+});
+
+renderComments();
+
+/* ═══════════════════════════════════════════════════════════════
+   CONTACT
+   ═══════════════════════════════════════════════════════════════ */
+const contactForm = $('#contactForm');
+contactForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const name = $('#contactName').value.trim();
+  const subject = $('#contactSubject').value.trim();
+  const btn = contactForm.querySelector('.btn-submit');
+  const originalText = btn.innerHTML;
+
+  btn.disabled = true;
+  btn.innerHTML = 'भेज रहे हैं... <span>⏳</span>';
+
+  setTimeout(() => {
+    showToast(`धन्यवाद ${name}! आपका संदेश मिल गया 💌`);
+    contactForm.reset();
+    btn.disabled = false;
+    btn.innerHTML = originalText;
+  }, 900);
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   BACK TO TOP
+   ═══════════════════════════════════════════════════════════════ */
+const backTop = $('#backTop');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 600) backTop.classList.add('show');
+  else backTop.classList.remove('show');
+}, { passive: true });
+
+backTop.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════════════════ */
+observeReveals();
+</script>
+</body>
+</html>
